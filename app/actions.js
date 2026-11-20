@@ -32,8 +32,8 @@ export async function setupAction(_prev, formData) {
   if (!name || !email) return { error: "Preencha nome e e-mail." };
   if (password.length < 8) return { error: "A senha precisa ter pelo menos 8 caracteres." };
   await ensureSchema();
-  await sql()`INSERT INTO users (name, email, password_hash, is_admin)
-    VALUES (${name}, ${email}, ${await hashPassword(password)}, TRUE)`;
+  await sql()`INSERT INTO users (name, email, password_hash, is_admin, role, all_branches)
+    VALUES (${name}, ${email}, ${await hashPassword(password)}, TRUE, 'admin', TRUE)`;
   await login(email, password);
   redirect("/");
 }

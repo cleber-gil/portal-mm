@@ -3,6 +3,8 @@ import { MODULES } from "@/lib/modules";
 import { logoutAction } from "@/app/actions";
 import { Icon } from "./icons";
 
+const ROLE_NAME = { admin: "Administrador", gestor: "Gestor", usuario: "Usuário" };
+
 function initials(name) {
   return String(name || "?")
     .split(/\s+/)
@@ -40,10 +42,10 @@ export default function Shell({ user, active, children }) {
               </a>
             )
           )}
-          {user.is_admin ? (
+          {user.role === "admin" || user.role === "gestor" ? (
             <Link href="/admin/usuarios" className={active === "admin" ? "active" : ""}>
               <Icon name="usuarios" size={16} />
-              Usuários
+              {user.role === "admin" ? "Usuários" : "Minha equipe"}
             </Link>
           ) : null}
         </nav>
@@ -51,7 +53,7 @@ export default function Shell({ user, active, children }) {
           <span className="who">
             <b style={{ fontWeight: 600 }}>{user.name}</b>
             <br />
-            <span className="muted small">{user.is_admin ? "Administrador" : user.email}</span>
+            <span className="muted small">{ROLE_NAME[user.role] || user.email}</span>
           </span>
           <span className="avatar">{initials(user.name)}</span>
           <form action={logoutAction}>
