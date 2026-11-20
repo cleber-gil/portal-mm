@@ -2,6 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Icon } from "../_components/icons";
+import MobileCollapse from "../_components/MobileCollapse";
 
 const INT = new Intl.NumberFormat("pt-BR");
 const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -225,6 +226,7 @@ export default function EstoqueView({ branches, restricted, canMatrix }) {
         </span>
       </div>
 
+      <MobileCollapse>
       <form className="filters" onSubmit={(e) => e.preventDefault()} aria-label="Filtros">
         <label className="field">
           <span>Loja</span>
@@ -293,6 +295,7 @@ export default function EstoqueView({ branches, restricted, canMatrix }) {
           <Icon name="fechar" size={16} /> Limpar
         </button>
       </form>
+      </MobileCollapse>
 
       {error ? (
         <div className="alert error" role="alert" style={{ marginBottom: 20 }}>

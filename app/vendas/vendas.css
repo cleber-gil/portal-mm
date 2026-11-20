@@ -54,3 +54,4 @@
   .vendas .metric.primary { grid-column: 1 / -1; }
   .vendas .bar { grid-template-columns: minmax(0, 110px) minmax(0, 1fr) 72px; }
 }
+@media (hover: none) { .vendas .charts > *:hover { transform: none; } }

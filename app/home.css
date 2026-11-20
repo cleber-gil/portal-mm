@@ -136,3 +136,9 @@
   .split { grid-template-columns: 1fr; }
   .split svg { max-width: 220px; justify-self: center; }
 }
+@media (max-width: 760px) {
+  .dash-page { padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
+  .dash-nav a { min-height: 40px; }
+  .dash-user .round, .dash-user .avatar { width: 40px; height: 40px; }
+}
+@media (hover: none) { .dcard:hover, .c-mods .mod:hover { transform: none; } }

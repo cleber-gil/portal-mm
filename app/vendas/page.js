@@ -1,3 +1,4 @@
+import MobileCollapse from "../_components/MobileCollapse";
 import Shell from "../_components/Shell";
 import { Icon } from "../_components/icons";
 import { getReport, defaultDates, SCOPES } from "@/lib/sales/report";
@@ -186,6 +187,7 @@ export default async function VendasPage({ searchParams }) {
           </nav>
         </header>
 
+        <MobileCollapse summary={`${branchLabel} · ${day(start)} a ${day(end)}`}>
         <form className="filters" method="get" aria-label="Filtros">
           <div className="field">
             <label htmlFor="start">Data inicial</label>
@@ -238,6 +240,7 @@ export default async function VendasPage({ searchParams }) {
             <Icon name="filtro" /> Aplicar filtros
           </button>
         </form>
+        </MobileCollapse>
 
         {branchesNote ? <p className="small text-2" style={{ marginTop: -12, marginBottom: 20 }}>{branchesNote}</p> : null}
         <section aria-label="Resultados">
