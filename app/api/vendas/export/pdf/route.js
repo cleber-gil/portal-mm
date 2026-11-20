@@ -1,8 +1,4 @@
-import { NextResponse } from "next/server";
-import { getReport, defaultDates } from "@/lib/sales/report";
-import { currentUser, canAccess } from "@/lib/core/auth";
-import { visibleBranches } from "@/lib/core/access";
-import { audit } from "@/lib/core/db";
+import { exportRoute, money } from "@/lib/sales/export";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 export const dynamic = "force-dynamic";
@@ -13,14 +9,6 @@ const PAGE_H = 841.89;
 const MARGIN = 40;
 const INK = rgb(0.04, 0.04, 0.04);
 const MUTED = rgb(0.32, 0.32, 0.31);
-
-function money(v) {
-  return (Number(v) || 0).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    maximumFractionDigits: 2,
-  });
-}
 
 class PdfWriter {
   constructor(doc, font, fontBold) {
@@ -116,44 +104,6 @@ function buildPdf(report, branchLabel, clientLabel) {
   };
 }
 
-export async function GET(request) {
-  const user = await currentUser();
-  if (!user) return NextResponse.json({ error: "não autenticado" }, { status: 401 });
-  if (!canAccess(user, "vendas", "view")) return NextResponse.json({ error: "sem acesso ao Painel de Vendas" }, { status: 403 });
-  const allowedBranches = visibleBranches(user);
-  try {
-    const { searchParams } = new URL(request.url);
-    const defaults = defaultDates();
-    const start = searchParams.get("start") || defaults.start;
-    const end = searchParams.get("end") || defaults.end;
-    const branch = searchParams.get("branch") || "";
-    const collection = searchParams.get("collection") || "";
-    const client = searchParams.get("client") || "";
-    const family = searchParams.get("family") || "";
-    const scope = searchParams.get("scope") || "";
-
-    await audit(user.id, "vendas", "exportar_pdf", { start, end, branch, collection, client, family, scope });
-    const report = await getReport({ start, end, branch, collection, client, family, scope, allowedBranches });
-    const branchLabel = branch
-      ? report.branchOptions.find((b) => b.code === branch)?.name || branch
-      : "Todas";
-    const clientLabel = client
-      ? report.clientOptions.find((c) => c.code === client)?.name || client
-      : "Todos";
-
-    const bytes = await buildPdf(report, branchLabel, clientLabel)();
-
-    return new Response(bytes, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="vendas_${start}_a_${end}.pdf"`,
-      },
-    });
-  } catch (e) {
-    return new Response(JSON.stringify({ error: e.message || String(e) }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-}
+export const GET = exportRoute("exportar_pdf", "pdf", async ({ report, branchLabel, clientLabel }) => {
+  return await buildPdf(report, branchLabel, clientLabel)();
+});
