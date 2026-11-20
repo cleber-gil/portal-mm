@@ -20,7 +20,21 @@ function readWanted(formData) {
     allBranches: formData.get("all_branches") === "on",
     branches: formData.getAll("branches").map(Number),
     modules,
+    crmCpf: cleanCpf(formData.get("crm_cpf")),
   };
+}
+
+// CPF só com dígitos (11); vazio = sem vínculo com o CRM
+function cleanCpf(v) {
+  const d = String(v || "").replace(/\D/g, "");
+  return d ? d.slice(-11).padStart(11, "0") : null;
+}
+
+function crmError(wanted, grant) {
+  if (grant.role === "usuario" && grant.modules.crm && !wanted.crmCpf) {
+    return "Para liberar o CRM a um usuário, informe o CPF da vendedora (é ele que define a carteira).";
+  }
+  return null;
 }
 
 async function saveGrant(userId, grant) {
@@ -52,8 +66,11 @@ export async function createUserAction(_prev, formData) {
   if (!name || !email) return { error: "Preencha nome e e-mail." };
   if (password.length < 8) return { error: "A senha precisa ter pelo menos 8 caracteres." };
 
-  const grant = sanitizeGrant(actor, readWanted(formData));
+  const wanted = readWanted(formData);
+  const grant = sanitizeGrant(actor, wanted);
   if (!(await validManager(actor, grant))) return { error: "Escolha um gestor ativo como responsável." };
+  const crmErr = crmError(wanted, grant);
+  if (crmErr) return { error: crmErr };
   if (grant.role !== "admin" && !grant.allBranches && grant.branches.length === 0) {
     return { error: "Marque pelo menos uma filial (ou todas)." };
   }
@@ -63,8 +80,9 @@ export async function createUserAction(_prev, formData) {
   if (exists) return { error: "Já existe um usuário com esse e-mail." };
   const [u] = await db`INSERT INTO users (name, email, password_hash)
     VALUES (${name}, ${email}, ${await hashPassword(password)}) RETURNING id`;
+  await db`UPDATE users SET crm_cpf = ${wanted.crmCpf} WHERE id = ${u.id}`;
   await saveGrant(u.id, grant);
-  await audit(actor.id, "admin", "criar_usuario", { userId: u.id, email, ...grant });
+  await audit(actor.id, "admin", "criar_usuario", { userId: u.id, email, crmCpf: wanted.crmCpf, ...grant });
   revalidatePath("/admin/usuarios");
   return { ok: `Usuário ${name} criado.` };
 }
@@ -85,20 +103,23 @@ export async function updateUserAction(_prev, formData) {
   if (!name) return { error: "Informe o nome." };
   if (password && password.length < 8) return { error: "A nova senha precisa ter pelo menos 8 caracteres." };
 
-  const grant = sanitizeGrant(actor, readWanted(formData));
+  const wanted = readWanted(formData);
+  const grant = sanitizeGrant(actor, wanted);
   if (!(await validManager(actor, grant))) return { error: "Escolha um gestor ativo como responsável." };
+  const crmErr = crmError(wanted, grant);
+  if (crmErr) return { error: crmErr };
   if (grant.role !== "admin" && !grant.allBranches && grant.branches.length === 0) {
     return { error: "Marque pelo menos uma filial (ou todas)." };
   }
 
-  await db`UPDATE users SET name = ${name}, active = ${active} WHERE id = ${id}`;
+  await db`UPDATE users SET name = ${name}, active = ${active}, crm_cpf = ${wanted.crmCpf} WHERE id = ${id}`;
   if (password) await db`UPDATE users SET password_hash = ${await hashPassword(password)} WHERE id = ${id}`;
   await saveGrant(id, grant);
   // se deixou de ser gestor, a equipe dele fica sem responsável (volta para o admin)
   if (target.role === "gestor" && grant.role !== "gestor") {
     await db`UPDATE users SET manager_id = NULL WHERE manager_id = ${id}`;
   }
-  await audit(actor.id, "admin", "alterar_usuario", { userId: id, active, senhaAlterada: !!password, ...grant });
+  await audit(actor.id, "admin", "alterar_usuario", { userId: id, active, senhaAlterada: !!password, crmCpf: wanted.crmCpf, ...grant });
   revalidatePath("/admin/usuarios");
   redirect("/admin/usuarios?salvo=1");
 }

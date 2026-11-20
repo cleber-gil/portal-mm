@@ -97,6 +97,21 @@ export default function UserForm({ action, actor, modules, levels, branches, rol
         </p>
       )}
 
+      {role === "usuario" ? (
+        <label className="field" style={{ maxWidth: 260 }}>
+          <span>CPF da vendedora (CRM)</span>
+          <input
+            name="crm_cpf"
+            defaultValue={user?.crm_cpf || ""}
+            inputMode="numeric"
+            autoComplete="off"
+            spellCheck={false}
+            placeholder="000.000.000-00…"
+          />
+          <span className="help">Obrigatório para liberar o CRM. Define a carteira de clientes dela.</span>
+        </label>
+      ) : null}
+
       {editing ? (
         <label className="check">
           <input type="checkbox" name="active" defaultChecked={user.active} /> Ativo (pode entrar no portal)

@@ -19,7 +19,7 @@ export default async function EditUserPage({ params }) {
   const db = sql();
   const id = Number(params.id);
   if (id === actor.id) redirect("/admin/usuarios");
-  const [u] = await db`SELECT id, name, email, role, manager_id, all_branches, active FROM users WHERE id = ${id}`;
+  const [u] = await db`SELECT id, name, email, role, manager_id, all_branches, active, crm_cpf FROM users WHERE id = ${id}`;
   if (!u || !canManageTarget(actor, u)) notFound();
   const rows = await db`SELECT module_id, level FROM user_modules WHERE user_id = ${id}`;
   const modules = Object.fromEntries(rows.map((r) => [r.module_id, r.level]));
