@@ -103,7 +103,7 @@ input, select, textarea {
   border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); min-width: 0;
   transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
 }
-input:focus-visible, select:focus-visible { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.25); }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.25); }
 input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; accent-color: var(--ink); padding: 0; }
 .btn {
   font: inherit; font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 8px; cursor: pointer;

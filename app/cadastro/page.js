@@ -42,10 +42,17 @@ export default async function CadastroPage({ searchParams }) {
             {canEdit ? "" : " Seu acesso é só de consulta."}
           </p>
         </div>
-        <Link href="/cadastro/classificacoes" className="btn secondary">
-          <Icon name="tag" size={16} />
-          Famílias e classificações
-        </Link>
+        <div className="row" style={{ gap: 8 }}>
+          {canEdit ? (
+            <Link href="/cadastro/importar" className="btn secondary">
+              Importar famílias
+            </Link>
+          ) : null}
+          <Link href="/cadastro/classificacoes" className="btn secondary">
+            <Icon name="tag" size={16} />
+            Famílias e classificações
+          </Link>
+        </div>
       </header>
 
       <div className="stack">
