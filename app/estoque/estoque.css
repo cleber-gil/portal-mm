@@ -1,0 +1,52 @@
+/* Módulo Estoque — estilos sob .estoque */
+.estoque { --track: #efefec; }
+.estoque .head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; margin-bottom: 20px; }
+.estoque .head h1 { font-size: 28px; letter-spacing: -0.035em; margin-top: 10px; }
+.estoque .head p { color: var(--text-2); margin-top: 8px; }
+.estoque .tabs { display: inline-flex; gap: 2px; padding: 3px; background: var(--surface-2); border-radius: 10px; flex-wrap: wrap; }
+.estoque .tabs button {
+  font: inherit; font-size: 13px; padding: 7px 14px; border-radius: 8px; border: 0; background: transparent; color: var(--text-2); cursor: pointer;
+  transition: background-color .2s var(--ease), color .2s var(--ease);
+}
+.estoque .tabs button:hover { color: var(--text); }
+.estoque .tabs button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(28, 28, 31, 0.08); font-weight: 600; }
+.estoque .toolbar { display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+.estoque .filters {
+  display: grid; grid-template-columns: minmax(180px, 1.2fr) minmax(200px, 1.6fr) repeat(2, minmax(130px, 1fr)) auto;
+  gap: 12px; align-items: end; padding: 16px 0 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 24px;
+}
+.estoque .filters .field { min-width: 0; }
+.estoque .filters input, .estoque .filters select { width: 100%; }
+.estoque .metrics { grid-template-columns: 1.4fr 1fr 1fr 1fr; border: 0; margin-bottom: 28px; }
+.estoque .metric { padding: 4px 24px 4px 0; }
+.estoque .metric + .metric { padding-left: 24px; }
+.estoque .metric .value { font-size: 30px; }
+.estoque .metric.primary .value { font-size: 40px; }
+.estoque .status { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+.estoque .layout { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(260px, 1fr); gap: 32px; align-items: start; }
+.estoque .section-title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.estoque .section-title h2 { font-size: 15px; }
+.estoque .bars { display: flex; flex-direction: column; gap: 12px; }
+.estoque .bar { display: grid; grid-template-columns: minmax(0, 110px) minmax(0, 1fr) 64px; gap: 10px; align-items: center; }
+.estoque .bar .name { font-size: 13px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.estoque .bar .track { height: 8px; background: var(--track); border-radius: 999px; overflow: hidden; }
+.estoque .bar .fill { display: block; height: 100%; width: 100%; background: var(--accent); border-radius: 999px; transform-origin: left center; transform: scaleX(var(--w, 0)); transition: transform .5s var(--ease); }
+.estoque .bar .val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; }
+.estoque th.num, .estoque td.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.estoque .chip.warn { background: var(--warn-soft); color: var(--warn); }
+.estoque .chip.danger { background: var(--danger-soft); color: var(--danger); }
+.estoque .expand { width: 28px; color: var(--muted); }
+.estoque tr.sub td { background: var(--surface-2); font-size: 12px; }
+.estoque .limit { padding: 10px 12px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); }
+@media (prefers-reduced-motion: reduce) { .estoque .bar .fill { transition: none; } }
+@media (max-width: 1100px) { .estoque .layout { grid-template-columns: minmax(0, 1fr); } .estoque .filters { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 760px) {
+  .estoque .head { grid-template-columns: 1fr; }
+  .estoque .metrics { grid-template-columns: 1fr 1fr; row-gap: 20px; }
+  .estoque .metric.primary { grid-column: 1 / -1; }
+  .estoque .metric + .metric { padding-left: 0; border-left: none; }
+}
+@media print {
+  .topbar, .skip-link, .estoque .tabs, .estoque .filters, .estoque .no-print { display: none !important; }
+  .estoque .table-wrap { max-height: none !important; overflow: visible; }
+}
