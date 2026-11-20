@@ -52,6 +52,8 @@
   .vendas .filters { grid-template-columns: 1fr 1fr; }
   .vendas .metrics { grid-template-columns: 1fr 1fr; row-gap: 20px; }
   .vendas .metric.primary { grid-column: 1 / -1; }
+  .vendas .metric.primary .value { font-size: clamp(24px, 8.4vw, 40px); }
+  .vendas .metric .value { font-size: clamp(20px, 6.4vw, 30px); }
   .vendas .bar { grid-template-columns: minmax(0, 110px) minmax(0, 1fr) 72px; }
 }
 @media (hover: none) { .vendas .charts > *:hover { transform: none; } }
