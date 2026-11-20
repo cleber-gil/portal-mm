@@ -1,15 +1,32 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Icon } from "../_components/icons";
 
 export default function ReferencesTable({ collection, refs: initialRefs, types, values, canEdit }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
   const [refs, setRefs] = useState(initialRefs);
-  const [q, setQ] = useState("");
-  const [missing, setMissing] = useState(""); // typeCode sem valor
-  const [famFilter, setFamFilter] = useState(""); // código da família
+  // filtros iniciam da URL (link compartilhável) e são refletidos nela
+  const [q, setQ] = useState(params.get("q") || "");
+  const [missing, setMissing] = useState(params.get("sem") || ""); // typeCode sem valor
+  const [famFilter, setFamFilter] = useState(params.get("familia") || ""); // código da família
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      const set = (k, v) => (v ? next.set(k, v) : next.delete(k));
+      set("q", q.trim());
+      set("sem", missing);
+      set("familia", famFilter);
+      const qs = next.toString();
+      if (qs !== params.toString()) router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+    }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q, missing, famFilter]);
   const [selected, setSelected] = useState(() => new Set());
   const [bulkType, setBulkType] = useState(104);
   const [bulkValue, setBulkValue] = useState("");
@@ -113,11 +130,19 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
       <div className="row">
         <label className="field" style={{ flex: "1 1 260px" }}>
           <span>Buscar referência ou nome</span>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Ex.: VC 001 ou ALINE" />
+          <input
+            type="search"
+            name="q"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Ex.: VC 001 ou ALINE…"
+            autoComplete="off"
+            spellCheck={false}
+          />
         </label>
         <label className="field">
           <span>Mostrar só sem</span>
-          <select value={missing} onChange={(e) => setMissing(e.target.value)}>
+          <select name="sem" value={missing} onChange={(e) => setMissing(e.target.value)}>
             <option value="">(todas)</option>
             {types.map((t) => (
               <option key={t.code} value={t.code}>
@@ -128,7 +153,7 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
         </label>
         <label className="field">
           <span>Família</span>
-          <select value={famFilter} onChange={(e) => setFamFilter(e.target.value)}>
+          <select name="familia" value={famFilter} onChange={(e) => setFamFilter(e.target.value)}>
             <option value="">(todas)</option>
             {(values[104] || []).map((v) => (
               <option key={v.code} value={v.code}>
@@ -138,7 +163,7 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
           </select>
         </label>
         <span className="small muted mono" style={{ paddingBottom: 10 }}>
-          {filtered.length} exibidas
+          <span aria-live="polite">{filtered.length} exibidas</span>
         </span>
       </div>
 
@@ -186,14 +211,20 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
                   </td>
                 ) : null}
                 <td>
-                  <span className="mono" style={{ fontWeight: 500 }}>{r.code}</span>
+                  <span className="mono" translate="no" style={{ fontWeight: 500 }}>
+                    {r.code}
+                  </span>
                   {!r.active ? (
                     <span className="chip missing" style={{ marginLeft: 8 }}>
                       inativo
                     </span>
                   ) : null}
                 </td>
-                <td className="text-2">{r.name}</td>
+                <td className="text-2">
+                  <span className="truncate" title={r.name}>
+                    {r.name}
+                  </span>
+                </td>
                 {types.map((t) => {
                   const c = r.classifications[t.code];
                   const mixed = r.mixed.includes(t.code);

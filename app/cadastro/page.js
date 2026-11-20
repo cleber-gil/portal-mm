@@ -7,6 +7,7 @@ import { requireModule, canAccess } from "@/lib/auth";
 import { CLASSIFICATION_TYPES, listClassificationValues, listReferencesByCollection, sortCollections } from "@/lib/totvs";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Cadastro de Produtos" };
 export const maxDuration = 60;
 
 export default async function CadastroPage({ searchParams }) {

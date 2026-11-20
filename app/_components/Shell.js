@@ -17,9 +17,12 @@ export default function Shell({ user, active, children }) {
   const allowed = MODULES.filter((m) => user.modules[m.id]);
   return (
     <>
+      <a href="#conteudo" className="skip-link">
+        Pular para o conteúdo
+      </a>
       <header className="topbar">
         <Link href="/" className="brand" aria-label="Início">
-          <span className="brand-mark">MM</span>
+          <span className="brand-mark" translate="no">MM</span>
           <span className="brand-name">Portal</span>
         </Link>
         <nav className="nav" aria-label="Módulos">
@@ -58,7 +61,9 @@ export default function Shell({ user, active, children }) {
           </form>
         </div>
       </header>
-      <main className="page">{children}</main>
+      <main className="page" id="conteudo" tabIndex={-1}>
+        {children}
+      </main>
     </>
   );
 }

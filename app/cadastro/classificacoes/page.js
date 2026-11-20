@@ -6,6 +6,7 @@ import { requireModule, canAccess } from "@/lib/auth";
 import { CLASSIFICATION_TYPES, listClassificationValues } from "@/lib/totvs";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Famílias e classificações" };
 
 export default async function ClassificacoesPage({ searchParams }) {
   const user = await requireModule("cadastro", "view");
@@ -35,13 +36,14 @@ export default async function ClassificacoesPage({ searchParams }) {
           </p>
         </div>
 
-        <div className="nav" role="tablist">
+        <nav className="nav" aria-label="Tipos de classificação">
           {CLASSIFICATION_TYPES.map((t) => (
-            <Link key={t.code} href={`/cadastro/classificacoes?tipo=${t.code}`} className={t.code === type.code ? "active" : ""}>
+            <Link key={t.code} href={`/cadastro/classificacoes?tipo=${t.code}`} className={t.code === type.code ? "active" : ""}
+              aria-current={t.code === type.code ? "page" : undefined}>
               {t.code} {t.name}
             </Link>
           ))}
-        </div>
+        </nav>
 
         {error ? <div className="alert error">{error}</div> : null}
 

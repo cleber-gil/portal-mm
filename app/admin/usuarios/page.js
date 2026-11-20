@@ -8,8 +8,12 @@ import { MODULES, LEVELS } from "@/lib/modules";
 
 export const dynamic = "force-dynamic";
 
+const DATE_FMT = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo" });
+
+export const metadata = { title: "Usuários" };
+
 function fmt(d) {
-  return d ? new Date(d).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }) : "—";
+  return d ? DATE_FMT.format(new Date(d)) : "—";
 }
 
 export default async function UsersPage({ searchParams }) {

@@ -26,7 +26,13 @@ export default function AuthForm({ action, fields, submitLabel }) {
       {fields.map((f) => (
         <label key={f.name} className="field">
           <span>{f.label}</span>
-          <input name={f.name} type={f.type || "text"} autoComplete={f.autoComplete} required />
+          <input
+            name={f.name}
+            type={f.type || "text"}
+            autoComplete={f.autoComplete || "off"}
+            spellCheck={f.type === "email" ? false : undefined}
+            required
+          />
           {f.help ? <span className="help">{f.help}</span> : null}
         </label>
       ))}

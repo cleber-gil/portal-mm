@@ -3,9 +3,11 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
 export const metadata = {
-  title: "Portal MM",
+  title: { default: "Portal MM", template: "%s · Portal MM" },
   description: "Portal interno Martha Medeiros",
 };
+
+export const viewport = { themeColor: "#fafaf9" };
 
 export default function RootLayout({ children }) {
   return (

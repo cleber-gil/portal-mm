@@ -2,6 +2,8 @@
 export default function Loading() {
   const rows = Array.from({ length: 10 });
   return (
+    <>
+    <div className="topbar-skeleton" aria-hidden="true" />
     <main className="page" aria-busy="true" aria-label="Carregando referências">
       <div className="page-head">
         <div style={{ display: "grid", gap: 12 }}>
@@ -29,8 +31,9 @@ export default function Loading() {
             </div>
           ))}
         </div>
-        <p className="small text-2">Buscando referências no TOTVS…</p>
+        <p className="small text-2" aria-live="polite">Buscando referências no TOTVS…</p>
       </div>
     </main>
+    </>
   );
 }

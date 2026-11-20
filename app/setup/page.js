@@ -5,6 +5,7 @@ import { setupAction } from "../actions";
 import { userCount } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Primeiro acesso" };
 
 // primeiro acesso: cria o administrador. Some assim que existir 1 usuário.
 export default async function SetupPage() {

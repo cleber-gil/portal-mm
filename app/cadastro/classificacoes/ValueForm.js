@@ -22,14 +22,17 @@ export default function ValueForm({ typeCode, value, compact }) {
       <input
         name="name"
         defaultValue={value?.name || ""}
-        placeholder={value ? "" : "Nome da nova família"}
+        placeholder={value ? undefined : "Ex.: RENDA GARDEN…"}
+        aria-label={value ? `Nome de ${value.code}` : "Nome do novo valor"}
+        autoComplete="off"
         required
         maxLength={40}
         style={{ flex: compact ? "1 1 160px" : "1 1 260px" }}
       />
       <Submit label={value ? "Renomear" : "Adicionar"} />
-      {state?.error ? <span className="small" style={{ color: "var(--danger)" }}>{state.error}</span> : null}
-      {state?.ok ? <span className="small" style={{ color: "var(--ok)" }}>{state.ok}</span> : null}
+      <span aria-live="polite" className="small" style={{ color: state?.error ? "var(--danger)" : "var(--ok)" }}>
+        {state?.error || state?.ok || ""}
+      </span>
     </form>
   );
 }

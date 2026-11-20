@@ -5,6 +5,7 @@ import { loginAction } from "../actions";
 import { currentUser, userCount } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Entrar" };
 
 export default async function LoginPage() {
   let setupNeeded = false;
