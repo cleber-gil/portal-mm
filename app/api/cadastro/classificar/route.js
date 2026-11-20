@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { currentUser, canAccess } from "@/lib/auth";
-import { audit } from "@/lib/db";
-import { CLASSIFICATION_TYPES, listClassificationValues, setReferenceClassification, invalidate } from "@/lib/totvs";
+import { currentUser, canAccess } from "@/lib/core/auth";
+import { audit } from "@/lib/core/db";
+import { CLASSIFICATION_TYPES, listClassificationValues, setReferenceClassification, invalidate } from "@/lib/totvs/products";
 
 export const maxDuration = 60;
 

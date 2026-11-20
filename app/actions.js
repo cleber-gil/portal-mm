@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { login, logout, hashPassword, userCount } from "@/lib/auth";
-import { sql, ensureSchema } from "@/lib/db";
+import { login, logout, hashPassword, userCount } from "@/lib/core/auth";
+import { sql, ensureSchema } from "@/lib/core/db";
 
 export async function loginAction(_prev, formData) {
   const email = String(formData.get("email") || "").trim();

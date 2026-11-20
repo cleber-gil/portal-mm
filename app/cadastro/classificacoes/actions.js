@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { currentUser, canAccess } from "@/lib/auth";
-import { audit } from "@/lib/db";
-import { CLASSIFICATION_TYPES, listClassificationValues, upsertClassificationValue } from "@/lib/totvs";
+import { currentUser, canAccess } from "@/lib/core/auth";
+import { audit } from "@/lib/core/db";
+import { CLASSIFICATION_TYPES, listClassificationValues, upsertClassificationValue } from "@/lib/totvs/products";
 
 // tira acento e padroniza em maiúsculas (padrão do cadastro: "PAETE SOLEIL")
 function cleanName(s) {

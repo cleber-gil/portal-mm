@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import AuthForm from "../_components/AuthForm";
 import AuthLayout from "../_components/AuthLayout";
 import { setupAction } from "../actions";
-import { userCount } from "@/lib/auth";
+import { userCount } from "@/lib/core/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Primeiro acesso" };

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { currentUser, canAccess } from "@/lib/auth";
-import { audit } from "@/lib/db";
-import { buildPlan, applyPlan } from "@/lib/familyImport";
+import { currentUser, canAccess } from "@/lib/core/auth";
+import { audit } from "@/lib/core/db";
+import { buildPlan, applyPlan } from "@/lib/cadastro/familyImport";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;

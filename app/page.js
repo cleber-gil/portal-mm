@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Shell from "./_components/Shell";
 import { Icon } from "./_components/icons";
-import { requireUser } from "@/lib/auth";
-import { MODULES, LEVELS } from "@/lib/modules";
+import { requireUser } from "@/lib/core/auth";
+import { MODULES, LEVELS } from "@/lib/config/modules";
 
 export const dynamic = "force-dynamic";
 

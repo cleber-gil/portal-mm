@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireManager, hashPassword } from "@/lib/auth";
-import { sql, ensureSchema, audit } from "@/lib/db";
-import { MODULES } from "@/lib/modules";
-import { canManageTarget, isAdmin, sanitizeGrant } from "@/lib/access";
+import { requireManager, hashPassword } from "@/lib/core/auth";
+import { sql, ensureSchema, audit } from "@/lib/core/db";
+import { MODULES } from "@/lib/config/modules";
+import { canManageTarget, isAdmin, sanitizeGrant } from "@/lib/core/access";
 
 // lê do formulário o que foi pedido; o que vale é o resultado de sanitizeGrant
 function readWanted(formData) {

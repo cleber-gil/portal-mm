@@ -1,8 +1,8 @@
 import Shell from "../_components/Shell";
 import { Icon } from "../_components/icons";
-import { getReport, defaultDates, SCOPES } from "@/lib/salesReport";
-import { requireModule } from "@/lib/auth";
-import { visibleBranches } from "@/lib/access";
+import { getReport, defaultDates, SCOPES } from "@/lib/sales/report";
+import { requireModule } from "@/lib/core/auth";
+import { visibleBranches } from "@/lib/core/access";
 import "./vendas.css";
 
 export const dynamic = "force-dynamic";

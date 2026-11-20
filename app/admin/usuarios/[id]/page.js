@@ -4,11 +4,11 @@ import Shell from "../../../_components/Shell";
 import UserForm from "../UserForm";
 import { Icon } from "../../../_components/icons";
 import { updateUserAction } from "../actions";
-import { requireManager } from "@/lib/auth";
-import { sql, ensureSchema } from "@/lib/db";
-import { MODULES, LEVELS } from "@/lib/modules";
-import { BRANCHES, ROLES } from "@/lib/branches";
-import { canManageTarget } from "@/lib/access";
+import { requireManager } from "@/lib/core/auth";
+import { sql, ensureSchema } from "@/lib/core/db";
+import { MODULES, LEVELS } from "@/lib/config/modules";
+import { BRANCHES, ROLES } from "@/lib/config/branches";
+import { canManageTarget } from "@/lib/core/access";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Editar usuário" };

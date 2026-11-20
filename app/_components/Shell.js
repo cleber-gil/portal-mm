@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MODULES } from "@/lib/modules";
+import { MODULES } from "@/lib/config/modules";
 import { logoutAction } from "@/app/actions";
 import { Icon } from "./icons";
 

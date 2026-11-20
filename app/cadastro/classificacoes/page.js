@@ -2,8 +2,8 @@ import Link from "next/link";
 import Shell from "../../_components/Shell";
 import ValueForm from "./ValueForm";
 import { Icon } from "../../_components/icons";
-import { requireModule, canAccess } from "@/lib/auth";
-import { CLASSIFICATION_TYPES, listClassificationValues } from "@/lib/totvs";
+import { requireModule, canAccess } from "@/lib/core/auth";
+import { CLASSIFICATION_TYPES, listClassificationValues } from "@/lib/totvs/products";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Famílias e classificações" };

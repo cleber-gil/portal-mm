@@ -3,8 +3,8 @@ import Shell from "../_components/Shell";
 import { Icon } from "../_components/icons";
 import ReferencesTable from "./ReferencesTable";
 import CollectionPicker from "./CollectionPicker";
-import { requireModule, canAccess } from "@/lib/auth";
-import { CLASSIFICATION_TYPES, listClassificationValues, listReferencesByCollection, sortCollections } from "@/lib/totvs";
+import { requireModule, canAccess } from "@/lib/core/auth";
+import { CLASSIFICATION_TYPES, listClassificationValues, listReferencesByCollection, sortCollections } from "@/lib/totvs/products";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Cadastro de Produtos" };

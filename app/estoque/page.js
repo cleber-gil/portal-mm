@@ -1,8 +1,8 @@
 import Shell from "../_components/Shell";
 import EstoqueView from "./EstoqueView";
-import { requireModule } from "@/lib/auth";
-import { visibleBranches } from "@/lib/access";
-import { BRANCHES } from "@/lib/branches";
+import { requireModule } from "@/lib/core/auth";
+import { visibleBranches } from "@/lib/core/access";
+import { BRANCHES } from "@/lib/config/branches";
 import "./estoque.css";
 
 export const dynamic = "force-dynamic";

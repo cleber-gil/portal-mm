@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createHmac, randomUUID } from "node:crypto";
-import { currentUser, canAccess } from "@/lib/auth";
-import { sql, audit } from "@/lib/db";
+import { currentUser, canAccess } from "@/lib/core/auth";
+import { sql, audit } from "@/lib/core/db";
 
 export const dynamic = "force-dynamic";
 

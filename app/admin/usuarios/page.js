@@ -2,10 +2,10 @@ import Link from "next/link";
 import Shell from "../../_components/Shell";
 import UserForm from "./UserForm";
 import { createUserAction } from "./actions";
-import { requireManager } from "@/lib/auth";
-import { sql, ensureSchema } from "@/lib/db";
-import { MODULES, LEVELS } from "@/lib/modules";
-import { BRANCHES, ROLES, branchName } from "@/lib/branches";
+import { requireManager } from "@/lib/core/auth";
+import { sql, ensureSchema } from "@/lib/core/db";
+import { MODULES, LEVELS } from "@/lib/config/modules";
+import { BRANCHES, ROLES, branchName } from "@/lib/config/branches";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Usuários" };

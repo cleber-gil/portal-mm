@@ -2,7 +2,7 @@ import Link from "next/link";
 import Shell from "../../_components/Shell";
 import { Icon } from "../../_components/icons";
 import ImportForm from "./ImportForm";
-import { requireModule } from "@/lib/auth";
+import { requireModule } from "@/lib/core/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Importar famílias" };

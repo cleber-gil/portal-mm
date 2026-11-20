@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { currentUser, canAccess } from "@/lib/auth";
-import { visibleBranches } from "@/lib/access";
-import { fetchFiscalBalance, restrictClients } from "@/lib/estoque";
+import { currentUser, canAccess } from "@/lib/core/auth";
+import { visibleBranches } from "@/lib/core/access";
+import { fetchFiscalBalance, restrictClients } from "@/lib/totvs/stock";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;

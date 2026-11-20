@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { getReport, defaultDates } from "@/lib/salesReport";
-import { currentUser, canAccess } from "@/lib/auth";
-import { visibleBranches } from "@/lib/access";
-import { audit } from "@/lib/db";
+import { getReport, defaultDates } from "@/lib/sales/report";
+import { currentUser, canAccess } from "@/lib/core/auth";
+import { visibleBranches } from "@/lib/core/access";
+import { audit } from "@/lib/core/db";
 import {
   Document,
   Packer,

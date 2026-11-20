@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, verifySession } from "./lib/session";
+import { SESSION_COOKIE, verifySession } from "./lib/core/session";
 
 const PUBLIC = ["/login", "/setup"];
 
