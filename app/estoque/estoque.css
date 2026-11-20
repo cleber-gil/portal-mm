@@ -41,6 +41,8 @@
 @media (max-width: 1100px) { .estoque .layout { grid-template-columns: minmax(0, 1fr); } .estoque .filters { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 760px) {
   .estoque .head { grid-template-columns: 1fr; }
+  .estoque .tabs { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+  .estoque .tabs button { white-space: nowrap; min-height: 40px; }
   .estoque .metrics { grid-template-columns: 1fr 1fr; row-gap: 20px; }
   .estoque .metric.primary { grid-column: 1 / -1; }
   .estoque .metric.primary .value { font-size: clamp(24px, 8.4vw, 40px); }
