@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Shell from "../../_components/Shell";
 import ValueForm from "./ValueForm";
+import { Icon } from "../../_components/icons";
 import { requireModule, canAccess } from "@/lib/auth";
 import { CLASSIFICATION_TYPES, listClassificationValues } from "@/lib/totvs";
 
@@ -25,14 +26,16 @@ export default async function ClassificacoesPage({ searchParams }) {
     <Shell user={user} active="cadastro">
       <div className="stack">
         <div>
-          <Link href="/cadastro" className="muted small">← Cadastro de Produtos</Link>
-          <h1>Famílias e classificações</h1>
-          <p className="muted" style={{ margin: 0 }}>
+          <Link href="/cadastro" className="btn ghost" style={{ paddingLeft: 0 }}>
+            <Icon name="voltar" size={16} /> Cadastro de Produtos
+          </Link>
+          <h1 style={{ marginTop: 8 }}>Famílias e classificações</h1>
+          <p className="text-2" style={{ marginTop: 6 }}>
             Valores cadastrados no TOTVS para cada tipo. Nomes são gravados em maiúsculas e sem acento.
           </p>
         </div>
 
-        <div className="nav">
+        <div className="nav" role="tablist">
           {CLASSIFICATION_TYPES.map((t) => (
             <Link key={t.code} href={`/cadastro/classificacoes?tipo=${t.code}`} className={t.code === type.code ? "active" : ""}>
               {t.code} {t.name}
@@ -43,7 +46,7 @@ export default async function ClassificacoesPage({ searchParams }) {
         {error ? <div className="alert error">{error}</div> : null}
 
         {canEdit ? (
-          <div className="card stack">
+          <div className="panel stack">
             <h2>Novo valor em {type.name}</h2>
             <ValueForm typeCode={type.code} />
             <span className="muted small">O código é gerado automaticamente na sequência dos existentes.</span>
@@ -62,7 +65,7 @@ export default async function ClassificacoesPage({ searchParams }) {
               {list.map((v) => (
                 <tr key={v.code}>
                   <td>
-                    <b>{v.code}</b>
+                    <span className="mono" style={{ fontWeight: 500 }}>{v.code}</span>
                   </td>
                   <td>{canEdit ? <ValueForm typeCode={type.code} value={v} compact /> : v.name}</td>
                 </tr>

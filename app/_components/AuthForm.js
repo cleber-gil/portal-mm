@@ -1,11 +1,12 @@
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
+import { Icon } from "./icons";
 
 function Submit({ label }) {
   const { pending } = useFormStatus();
   return (
-    <button className="btn" type="submit" disabled={pending} style={{ justifyContent: "center" }}>
+    <button className="btn" type="submit" disabled={pending} style={{ width: "100%", padding: "11px 16px" }}>
       {pending ? "Aguarde…" : label}
     </button>
   );
@@ -15,12 +16,18 @@ function Submit({ label }) {
 export default function AuthForm({ action, fields, submitLabel }) {
   const [state, formAction] = useFormState(action, null);
   return (
-    <form action={formAction} className="stack">
-      {state?.error ? <div className="alert error">{state.error}</div> : null}
+    <form action={formAction} className="stack" style={{ gap: 16 }}>
+      {state?.error ? (
+        <div className="alert error" role="alert">
+          <Icon name="erro" size={16} />
+          {state.error}
+        </div>
+      ) : null}
       {fields.map((f) => (
-        <label key={f.name}>
-          {f.label}
+        <label key={f.name} className="field">
+          <span>{f.label}</span>
           <input name={f.name} type={f.type || "text"} autoComplete={f.autoComplete} required />
+          {f.help ? <span className="help">{f.help}</span> : null}
         </label>
       ))}
       <Submit label={submitLabel} />

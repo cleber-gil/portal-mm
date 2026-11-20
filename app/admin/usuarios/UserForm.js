@@ -21,17 +21,18 @@ export default function UserForm({ action, modules, levels, user, submitLabel })
       {state?.ok ? <div className="alert success">{state.ok}</div> : null}
       {editing ? <input type="hidden" name="id" value={user.id} /> : null}
       <div className="row">
-        <label style={{ flex: "1 1 200px" }}>
-          Nome
+        <label className="field" style={{ flex: "1 1 200px" }}>
+          <span>Nome</span>
           <input name="name" defaultValue={user?.name || ""} required />
         </label>
-        <label style={{ flex: "1 1 220px" }}>
-          E-mail
+        <label className="field" style={{ flex: "1 1 220px" }}>
+          <span>E-mail</span>
           <input name="email" type="email" defaultValue={user?.email || ""} required={!editing} disabled={editing} />
         </label>
-        <label style={{ flex: "1 1 180px" }}>
-          {editing ? "Nova senha (deixe vazio p/ manter)" : "Senha inicial"}
+        <label className="field" style={{ flex: "1 1 180px" }}>
+          <span>{editing ? "Nova senha" : "Senha inicial"}</span>
           <input name="password" type="password" autoComplete="new-password" required={!editing} minLength={8} />
+          <span className="help">{editing ? "Deixe vazio para manter a atual." : "Mínimo de 8 caracteres."}</span>
         </label>
       </div>
       <div className="row">
@@ -45,7 +46,8 @@ export default function UserForm({ action, modules, levels, user, submitLabel })
         ) : null}
       </div>
       <div>
-        <div className="muted small" style={{ marginBottom: 6 }}>Módulos</div>
+        <div className="eyebrow" style={{ marginBottom: 8 }}>Acesso por módulo</div>
+        <div className="table-wrap" style={{ maxHeight: "none" }}>
         <table>
           <thead>
             <tr>
@@ -78,6 +80,7 @@ export default function UserForm({ action, modules, levels, user, submitLabel })
             })}
           </tbody>
         </table>
+        </div>
       </div>
       <div>
         <Submit label={submitLabel} />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Shell from "../../../_components/Shell";
 import UserForm from "../UserForm";
+import { Icon } from "../../../_components/icons";
 import { updateUserAction } from "../actions";
 import { requireAdmin } from "@/lib/auth";
 import { sql, ensureSchema } from "@/lib/db";
@@ -23,11 +24,13 @@ export default async function EditUserPage({ params }) {
     <Shell user={admin} active="admin">
       <div className="stack">
         <div>
-          <Link href="/admin/usuarios" className="muted small">← Usuários</Link>
-          <h1>{u.name}</h1>
-          <p className="muted" style={{ margin: 0 }}>{u.email}</p>
+          <Link href="/admin/usuarios" className="btn ghost" style={{ paddingLeft: 0 }}>
+            <Icon name="voltar" size={16} /> Usuários
+          </Link>
+          <h1 style={{ marginTop: 8 }}>{u.name}</h1>
+          <p className="text-2" style={{ marginTop: 4 }}>{u.email}</p>
         </div>
-        <div className="card">
+        <div className="panel">
           <UserForm
             action={updateUserAction}
             modules={MODULES}

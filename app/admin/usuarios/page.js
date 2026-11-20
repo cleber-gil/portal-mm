@@ -24,12 +24,13 @@ export default async function UsersPage({ searchParams }) {
   return (
     <Shell user={admin} active="admin">
       <div className="stack">
-        <div>
-          <h1>Usuários e permissões</h1>
-          <p className="muted" style={{ margin: 0 }}>
-            Cada usuário vê só os módulos liberados. Administrador vê tudo.
-          </p>
-        </div>
+        <header className="page-head" style={{ marginBottom: 0 }}>
+          <div>
+            <div className="eyebrow">Administração</div>
+            <h1 style={{ marginTop: 10 }}>Usuários e permissões</h1>
+            <p>Cada usuário vê só os módulos liberados. Administrador vê tudo.</p>
+          </div>
+        </header>
         {searchParams?.salvo ? <div className="alert success">Alterações salvas.</div> : null}
 
         <div className="table-wrap" style={{ maxHeight: "none" }}>
@@ -58,7 +59,7 @@ export default async function UsersPage({ searchParams }) {
                     const l = u.is_admin ? "edit" : byUser[u.id]?.[m.id];
                     return <td key={m.id}>{l ? LEVELS.find((x) => x.id === l)?.name : <span className="muted">—</span>}</td>;
                   })}
-                  <td className="muted">{fmt(u.last_login_at)}</td>
+                  <td className="muted mono small">{fmt(u.last_login_at)}</td>
                   <td>
                     <Link href={`/admin/usuarios/${u.id}`} className="btn secondary">
                       Editar
@@ -70,7 +71,7 @@ export default async function UsersPage({ searchParams }) {
           </table>
         </div>
 
-        <div className="card stack">
+        <div className="panel stack">
           <h2>Novo usuário</h2>
           <UserForm action={createUserAction} modules={MODULES} levels={LEVELS} submitLabel="Criar usuário" />
         </div>

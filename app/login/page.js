@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import AuthForm from "../_components/AuthForm";
+import AuthLayout from "../_components/AuthLayout";
 import { loginAction } from "../actions";
 import { currentUser, userCount } from "@/lib/auth";
 
@@ -18,22 +19,16 @@ export default async function LoginPage() {
   if (setupNeeded) redirect("/setup");
 
   return (
-    <div className="center-box">
-      <div className="card auth-card stack">
-        <div>
-          <h1>Portal MM</h1>
-          <p className="muted" style={{ margin: 0 }}>Martha Medeiros · acesso interno</p>
-        </div>
-        {dbError ? <div className="alert error">{dbError}</div> : null}
-        <AuthForm
-          action={loginAction}
-          submitLabel="Entrar"
-          fields={[
-            { name: "email", label: "E-mail", type: "email", autoComplete: "username" },
-            { name: "password", label: "Senha", type: "password", autoComplete: "current-password" },
-          ]}
-        />
-      </div>
-    </div>
+    <AuthLayout title="Entrar" subtitle="Use o e-mail e a senha cadastrados pelo administrador.">
+      {dbError ? <div className="alert error">{dbError}</div> : null}
+      <AuthForm
+        action={loginAction}
+        submitLabel="Entrar"
+        fields={[
+          { name: "email", label: "E-mail", type: "email", autoComplete: "username" },
+          { name: "password", label: "Senha", type: "password", autoComplete: "current-password" },
+        ]}
+      />
+    </AuthLayout>
   );
 }

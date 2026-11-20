@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Shell from "../_components/Shell";
+import { Icon } from "../_components/icons";
 import ReferencesTable from "./ReferencesTable";
+import CollectionPicker from "./CollectionPicker";
 import { requireModule, canAccess } from "@/lib/auth";
 import { CLASSIFICATION_TYPES, listClassificationValues, listReferencesByCollection, sortCollections } from "@/lib/totvs";
 
@@ -28,37 +30,32 @@ export default async function CadastroPage({ searchParams }) {
 
   return (
     <Shell user={user} active="cadastro">
-      <div className="stack">
-        <div className="row" style={{ justifyContent: "space-between" }}>
-          <div>
-            <h1>Cadastro de Produtos</h1>
-            <p className="muted" style={{ margin: 0 }}>
-              Referências por coleção e suas classificações no TOTVS. {canEdit ? "" : "Seu acesso é só de consulta."}
-            </p>
+      <header className="page-head">
+        <div>
+          <div className="eyebrow" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span className="live-dot" aria-hidden="true" /> Conectado ao TOTVS
           </div>
-          <Link href="/cadastro/classificacoes" className="btn secondary">
-            Famílias e classificações
-          </Link>
+          <h1 style={{ marginTop: 10 }}>Cadastro de Produtos</h1>
+          <p>
+            Referências por coleção e suas classificações. Coleções passadas também aparecem, para completar o que faltou.
+            {canEdit ? "" : " Seu acesso é só de consulta."}
+          </p>
         </div>
+        <Link href="/cadastro/classificacoes" className="btn secondary">
+          <Icon name="tag" size={16} />
+          Famílias e classificações
+        </Link>
+      </header>
 
-        <form className="card row" method="get">
-          <label style={{ minWidth: 260 }}>
-            Coleção
-            <select name="colecao" defaultValue={collection}>
-              {collections.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.code} · {c.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button className="btn" type="submit">
-            Abrir
-          </button>
-          <span className="muted small">Inclui coleções passadas para completar informações.</span>
-        </form>
+      <div className="stack">
+        <CollectionPicker collections={collections} value={collection} />
 
-        {error ? <div className="alert error">{error}</div> : null}
+        {error ? (
+          <div className="alert error" role="alert">
+            <Icon name="erro" size={16} />
+            {error}
+          </div>
+        ) : null}
 
         {!error && collection ? (
           <ReferencesTable

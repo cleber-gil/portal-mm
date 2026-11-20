@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Icon } from "../_components/icons";
 
 export default function ReferencesTable({ collection, refs: initialRefs, types, values, canEdit }) {
   const router = useRouter();
@@ -86,30 +87,36 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
     }
   }
 
+  const totalSkus = refs.reduce((n, r) => n + r.skus, 0);
+  const filled = refs.length - withoutFamily;
+
   return (
     <div className="stack">
-      <div className="card stats">
-        <div>
-          <b>{refs.length}</b>
-          <span className="muted">referências em {collection.code}</span>
+      <div className="metrics">
+        <div className="metric">
+          <div className="value">{refs.length}</div>
+          <div className="label">
+            referências em {collection.code}
+            {collection.name ? ` · ${collection.name}` : ""}
+          </div>
         </div>
-        <div>
-          <b style={{ color: withoutFamily ? "var(--warn)" : "var(--ok)" }}>{withoutFamily}</b>
-          <span className="muted">sem família</span>
+        <div className="metric">
+          <div className="value" style={{ color: withoutFamily ? "var(--warn)" : "var(--ok)" }}>{withoutFamily}</div>
+          <div className="label">sem família ({filled} preenchidas)</div>
         </div>
-        <div>
-          <b>{refs.reduce((s, r) => s + r.skus, 0)}</b>
-          <span className="muted">SKUs (cor × tamanho)</span>
+        <div className="metric">
+          <div className="value">{totalSkus.toLocaleString("pt-BR")}</div>
+          <div className="label">SKUs (cor × tamanho)</div>
         </div>
       </div>
 
       <div className="row">
-        <label style={{ flex: "1 1 240px" }}>
-          Buscar referência ou nome
+        <label className="field" style={{ flex: "1 1 260px" }}>
+          <span>Buscar referência ou nome</span>
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Ex.: VC 001 ou ALINE" />
         </label>
-        <label>
-          Mostrar só sem…
+        <label className="field">
+          <span>Mostrar só sem</span>
           <select value={missing} onChange={(e) => setMissing(e.target.value)}>
             <option value="">(todas)</option>
             {types.map((t) => (
@@ -119,8 +126,8 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
             ))}
           </select>
         </label>
-        <label>
-          Família
+        <label className="field">
+          <span>Família</span>
           <select value={famFilter} onChange={(e) => setFamFilter(e.target.value)}>
             <option value="">(todas)</option>
             {(values[104] || []).map((v) => (
@@ -130,50 +137,73 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
             ))}
           </select>
         </label>
-        <span className="muted small">{filtered.length} exibidas</span>
+        <span className="small muted mono" style={{ paddingBottom: 10 }}>
+          {filtered.length} exibidas
+        </span>
       </div>
 
-      {msg ? <div className={`alert ${msg.type}`}>{msg.text}</div> : null}
+      {msg ? (
+        <div className={`alert ${msg.type}`} role="status">
+          <Icon name={msg.type === "error" ? "erro" : "ok"} size={16} />
+          {msg.text}
+        </div>
+      ) : null}
 
       <div className="table-wrap">
         <table>
           <thead>
             <tr>
               {canEdit ? (
-                <th>
-                  <input type="checkbox" checked={allSelected} onChange={toggleAll} title="Selecionar exibidas" />
+                <th style={{ width: 36 }}>
+                  <input type="checkbox" checked={allSelected} onChange={toggleAll} aria-label="Selecionar exibidas" />
                 </th>
               ) : null}
               <th>Referência</th>
               <th>Nome</th>
               {types.map((t) => (
-                <th key={t.code}>
-                  {t.code} {t.name}
-                </th>
+                <th key={t.code}>{t.name}</th>
               ))}
               <th>Cores</th>
-              <th>Tam.</th>
+              <th>Tamanhos</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((r) => (
-              <tr key={r.referenceId} className={selected.has(r.referenceId) ? "selected" : ""}>
+              <tr
+                key={r.referenceId}
+                className={selected.has(r.referenceId) ? "selected" : ""}
+                onClick={canEdit ? (e) => e.target.tagName !== "INPUT" && toggle(r.referenceId) : undefined}
+                style={canEdit ? { cursor: "pointer" } : undefined}
+              >
                 {canEdit ? (
                   <td>
-                    <input type="checkbox" checked={selected.has(r.referenceId)} onChange={() => toggle(r.referenceId)} />
+                    <input
+                      type="checkbox"
+                      checked={selected.has(r.referenceId)}
+                      onChange={() => toggle(r.referenceId)}
+                      aria-label={`Selecionar ${r.code}`}
+                    />
                   </td>
                 ) : null}
                 <td>
-                  <b>{r.code}</b>
-                  {!r.active ? <span className="chip missing" style={{ marginLeft: 6 }}>inativo</span> : null}
+                  <span className="mono" style={{ fontWeight: 500 }}>{r.code}</span>
+                  {!r.active ? (
+                    <span className="chip missing" style={{ marginLeft: 8 }}>
+                      inativo
+                    </span>
+                  ) : null}
                 </td>
-                <td>{r.name}</td>
+                <td className="text-2">{r.name}</td>
                 {types.map((t) => {
                   const c = r.classifications[t.code];
+                  const mixed = r.mixed.includes(t.code);
                   return (
                     <td key={t.code}>
                       {c ? (
-                        <span className={`chip${r.mixed.includes(t.code) ? " missing" : ""}`} title={r.mixed.includes(t.code) ? "Valores diferentes entre os SKUs" : c.code}>
+                        <span
+                          className={`chip${mixed ? " missing" : t.code === 104 ? " accent" : ""}`}
+                          title={mixed ? "Valores diferentes entre os SKUs" : `Código ${c.code}`}
+                        >
                           {c.name || c.code}
                         </span>
                       ) : (
@@ -182,30 +212,35 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
                     </td>
                   );
                 })}
-                <td className="muted" title={r.colors.join(", ")}>
+                <td className="mono muted" title={r.colors.join(", ")}>
                   {r.colors.length}
                 </td>
-                <td className="muted">{r.sizes.join(" ")}</td>
+                <td className="mono muted small">{r.sizes.join(" ")}</td>
               </tr>
             ))}
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={20} className="muted" style={{ textAlign: "center", padding: 24 }}>
-                  Nenhuma referência com esses filtros.
-                </td>
-              </tr>
-            ) : null}
           </tbody>
         </table>
+        {filtered.length === 0 ? (
+          <div className="empty">
+            <Icon name="busca" size={28} />
+            <b>Nenhuma referência com esses filtros.</b>
+            <span>
+              {refs.length === 0
+                ? `A coleção ${collection.code} ainda não tem produtos cadastrados no TOTVS.`
+                : "Limpe a busca ou troque o filtro para ver as demais."}
+            </span>
+          </div>
+        ) : null}
       </div>
 
       {canEdit && selected.size > 0 ? (
-        <div className="bulkbar">
+        <div className="bulkbar" role="region" aria-label="Aplicar classificação">
           <div style={{ alignSelf: "center" }}>
-            <b>{selected.size}</b> selecionada(s)
+            <span className="mono" style={{ fontSize: 20, fontWeight: 500 }}>{selected.size}</span>
+            <span style={{ color: "#b8b8bf", marginLeft: 6 }}>selecionada(s)</span>
           </div>
-          <label>
-            Classificação
+          <label className="field">
+            <span>Classificação</span>
             <select
               value={bulkType}
               onChange={(e) => {
@@ -220,8 +255,8 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
               ))}
             </select>
           </label>
-          <label style={{ minWidth: 220 }}>
-            Valor
+          <label className="field">
+            <span>Valor</span>
             <select value={bulkValue} onChange={(e) => setBulkValue(e.target.value)}>
               <option value="">Escolha…</option>
               {(values[bulkType] || []).map((v) => (
@@ -232,10 +267,11 @@ export default function ReferencesTable({ collection, refs: initialRefs, types, 
             </select>
           </label>
           <button className="btn" onClick={apply} disabled={!bulkValue || busy}>
-            {busy ? "Gravando no TOTVS…" : "Aplicar"}
+            {busy ? "Gravando no TOTVS…" : "Aplicar no TOTVS"}
           </button>
-          <button className="btn" style={{ background: "transparent", color: "#fff", borderColor: "#666" }} onClick={() => setSelected(new Set())}>
-            Limpar seleção
+          <button className="btn ghost" onClick={() => setSelected(new Set())}>
+            <Icon name="fechar" size={16} />
+            Limpar
           </button>
         </div>
       ) : null}
