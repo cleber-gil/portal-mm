@@ -15,7 +15,7 @@ const VIEWS = [
   { id: "stores", name: "Lojas", note: "Saldo 1 físico · lojas, sem Matriz e sem consignação" },
   { id: "matrix", name: "Matriz", note: "Saldo 1 físico · somente Matriz" },
   { id: "consignment", name: "Consignação", note: "Saldo pelas notas: remessa 5917 − devolução 1918 − retorno simbólico 1919, desde 01/01/2025" },
-  { id: "conditional", name: "Condicional", note: "Saldo pelas notas: remessa 5912 − retorno 1913, últimos 6 meses" },
+  { id: "conditional", name: "Condicional", note: "Saldo pelas notas: remessa 5912 − retorno 1913, últimos 3 meses" },
 ];
 const FISCAL = new Set(["consignment", "conditional"]);
 
