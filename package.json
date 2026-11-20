@@ -10,6 +10,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
     "@phosphor-icons/react": "^2.1.10",
+    "@vercel/functions": "^3.11.3",
     "bcryptjs": "^2.4.3",
     "docx": "^9.16.0",
     "exceljs": "^4.4.0",

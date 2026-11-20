@@ -221,7 +221,7 @@ export default function EstoqueView({ branches, restricted, canMatrix }) {
           ))}
         </div>
         <span className="status" aria-live="polite">
-          {error ? null : loading ? "Consultando a TOTVS…" : data ? `Atualizado em ${DT.format(new Date(data.updatedAt))}` : ""}
+          {error ? null : loading ? "Consultando a TOTVS…" : data ? `Dados de ${DT.format(new Date(data.updatedAt))}${data.refreshing ? " · atualizando em segundo plano…" : ""}` : ""}
         </span>
       </div>
 
