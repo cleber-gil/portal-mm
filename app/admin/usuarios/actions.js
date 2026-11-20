@@ -39,7 +39,7 @@ function crmError(wanted, grant) {
 
 async function saveGrant(userId, grant) {
   const db = sql();
-  await db`UPDATE users SET role = ${grant.role}, is_admin = ${grant.role === "admin"},
+  await db`UPDATE users SET role = ${grant.role},
     manager_id = ${grant.managerId}, all_branches = ${grant.allBranches} WHERE id = ${userId}`;
   await db`DELETE FROM user_modules WHERE user_id = ${userId}`;
   for (const [id, level] of Object.entries(grant.modules)) {
