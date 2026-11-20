@@ -15,6 +15,11 @@ import {
   CheckCircle,
   Tray,
   X,
+  FileXls,
+  FilePdf,
+  FileDoc,
+  Funnel,
+  Buildings,
 } from "@phosphor-icons/react";
 
 const WEIGHT = "regular";
@@ -34,6 +39,11 @@ export function Icon({ name, size = 18, ...rest }) {
     ok: CheckCircle,
     vazio: Tray,
     fechar: X,
+    excel: FileXls,
+    pdf: FilePdf,
+    word: FileDoc,
+    filtro: Funnel,
+    grupo: Buildings,
   };
   const C = map[name];
   return C ? <C size={size} weight={WEIGHT} aria-hidden="true" {...rest} /> : null;

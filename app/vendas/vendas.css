@@ -1,0 +1,57 @@
+/* Módulo Painel de Vendas — estilos próprios, sempre sob .vendas para não vazar */
+.vendas { --track: #efefec; }
+.vendas .head { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 32px; align-items: end; margin-bottom: 24px; }
+.vendas .head h1 { font-size: 28px; letter-spacing: -0.035em; margin-top: 10px; }
+.vendas .head p { color: var(--text-2); margin-top: 8px; max-width: 60ch; }
+.vendas .exports { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+
+.vendas .filters {
+  display: grid; grid-template-columns: repeat(2, minmax(130px, 150px)) repeat(5, minmax(140px, 1fr)) auto;
+  gap: 12px; align-items: end;
+  padding: 16px 0 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 24px;
+}
+.vendas .filters .field { min-width: 0; }
+.vendas .filters input, .vendas .filters select { width: 100%; }
+
+.vendas .metrics { grid-template-columns: 1.6fr 1fr 1fr 1fr; border: 0; margin-bottom: 36px; }
+.vendas .metric { padding: 4px 24px 4px 0; }
+.vendas .metric + .metric { padding-left: 24px; }
+.vendas .metric .value { font-size: 30px; }
+.vendas .metric.primary .value { font-size: 44px; }
+
+.vendas .charts { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 40px; margin-bottom: 40px; }
+.vendas .section-title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+.vendas .section-title h2 { font-size: 15px; }
+.vendas .bars { display: flex; flex-direction: column; gap: 12px; }
+.vendas .bar { display: grid; grid-template-columns: minmax(0, 180px) minmax(0, 1fr) 88px; gap: 12px; align-items: center; }
+.vendas .bar .name { font-size: 13px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vendas .bar .track { height: 10px; background: var(--track); border-radius: 999px; overflow: hidden; }
+.vendas .bar .fill {
+  display: block; height: 100%; width: 100%; background: var(--accent); border-radius: 999px;
+  transform-origin: left center; transform: scaleX(var(--w, 0));
+  animation: vendas-grow .8s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms);
+}
+.vendas .bar.muted-row .fill { background: var(--line-strong); }
+.vendas .bar .val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; }
+
+.vendas .tables { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+.vendas th.num, .vendas td.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.vendas .chip.warn { background: var(--warn-soft); color: var(--warn); }
+.vendas .alert.warn { color: var(--warn); background: var(--warn-soft); border-color: transparent; }
+.vendas .alert.info { color: var(--text-2); background: var(--surface-2); border-color: transparent; }
+.vendas .alert a { color: inherit; font-weight: 600; text-underline-offset: 2px; }
+
+@keyframes vendas-grow { from { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) { .vendas .bar .fill { animation: none; } }
+
+@media (max-width: 1250px) { .vendas .filters { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 1100px) { .vendas .charts { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) {
+  .vendas .head { grid-template-columns: 1fr; }
+  .vendas .exports { justify-content: flex-start; }
+  .vendas .filters { grid-template-columns: 1fr 1fr; }
+  .vendas .metrics { grid-template-columns: 1fr 1fr; row-gap: 20px; }
+  .vendas .metric.primary { grid-column: 1 / -1; }
+  .vendas .metric + .metric { padding-left: 0; border-left: none; }
+  .vendas .bar { grid-template-columns: minmax(0, 110px) minmax(0, 1fr) 72px; }
+}
