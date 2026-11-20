@@ -136,10 +136,10 @@ async function OverviewCard({ k }) {
     <Card title={`Resumo de ${m.month.label}`} href="/vendas" className="c-over" i={4}>
       <div className="split">
         <div className="stats">
-          <Stat label="Valor líquido" value={BRL_C.format(m.net).replace("R$", "").trim()} unit="R$" />
+          <Stat label="Valor líquido" value={BRL_C.format(m.net)} />
           <Stat label="Peças vendidas" value={INT.format(m.quantity)} unit="pçs" />
           <Stat label="Vendas" value={INT.format(m.count)} unit="un." />
-          <Stat label="Ticket médio" value={BRL.format(m.ticket).replace("R$", "").trim()} unit="R$" />
+          <Stat label="Ticket médio" value={BRL.format(m.ticket)} />
         </div>
         <MonthDial today={m.month.today} days={m.month.daysInMonth} />
       </div>
