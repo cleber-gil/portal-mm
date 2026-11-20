@@ -16,8 +16,9 @@
 
 /* topo: marca, pílula de módulos, usuário */
 .dash-top { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; margin-bottom: 18px; }
-.dash-brand { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 700; letter-spacing: 0.06em; font-size: 13px; color: var(--ink); }
-.dash-brand .spark { font-size: 20px; line-height: 1; color: var(--ink); display: inline-block; animation: spin 18s linear infinite; }
+.dash-brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 500; letter-spacing: 0.18em; font-size: 12.5px; color: #a8865a; }
+.dash-brand .spark { width: 20px; height: 28px; object-fit: contain; transition: transform .5s var(--spring); }
+.dash-brand:hover .spark { transform: rotate(-10deg) scale(1.1); }
 .dash-nav { display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.75); box-shadow: 0 10px 30px -18px rgba(32, 62, 84, 0.4); backdrop-filter: blur(8px); }
 .dash-nav a {
   display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 500;
@@ -114,7 +115,7 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .dcard, .hero-read, .day-bars rect, .dot-cols .dot.on, .draw, .hub, .pulse-dot, .compass .store, .dash-brand .spark { animation: none; }
+  .dcard, .hero-read, .day-bars rect, .dot-cols .dot.on, .draw, .hub, .pulse-dot, .compass .store { animation: none; }
   .dcard:hover, .c-mods .mod:hover { transform: none; }
 }
 

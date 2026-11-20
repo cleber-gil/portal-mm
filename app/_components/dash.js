@@ -9,7 +9,7 @@ function arc(cx, cy, r, from, to) {
 }
 const clamp = (v) => Math.max(0, Math.min(1, Number(v) || 0));
 
-// medidor grande da área de destaque (como o do cubo da turbina): 0–100 em 220°
+// medidor grande da área de destaque: 0–100 em 220°, com o emblema da Martha Medeiros no centro
 export function HeroGauge({ value, label }) {
   const v = clamp(value);
   const START = 200, SWEEP = 220;
@@ -19,11 +19,6 @@ export function HeroGauge({ value, label }) {
   return (
     <svg viewBox="0 0 400 400" className="hero-gauge" role="img" aria-label={label}>
       <defs>
-        <radialGradient id="hub" cx="40%" cy="35%" r="70%">
-          <stop offset="0%" stopColor="#fff7ec" />
-          <stop offset="55%" stopColor="#f9d3a3" />
-          <stop offset="100%" stopColor="#ee9a30" />
-        </radialGradient>
         <linearGradient id="hg" x1="0" x2="1">
           <stop offset="0%" stopColor="#f6c27a" />
           <stop offset="100%" stopColor="#ee9a30" />
@@ -48,9 +43,8 @@ export function HeroGauge({ value, label }) {
       })}
       <circle cx={mx} cy={my} r="6" fill="#ee9a30" stroke="#fff" strokeWidth="2.5" className="pulse-dot" />
       <circle cx="200" cy="200" r="104" fill="rgba(255,255,255,0.55)" />
-      <circle cx="200" cy="200" r="78" fill="url(#hub)" className="hub" />
-      <path d={`M 200 200 L ${polar(200, 200, 78, 90).join(" ")} A 78 78 0 0 0 ${polar(200, 200, 78, 180).join(" ")} Z`} fill="rgba(255,255,255,0.35)" />
-      <circle cx="200" cy="200" r="7" fill="#ee9a30" stroke="#fff" strokeWidth="2" />
+      <circle cx="200" cy="200" r="82" fill="#fffaf3" stroke="url(#hg)" strokeWidth="2" className="hub" />
+      <image href="/mm-emblema.webp" x="161" y="144" width="78" height="112" className="hub" preserveAspectRatio="xMidYMid meet" aria-hidden="true" />
     </svg>
   );
 }

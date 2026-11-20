@@ -183,7 +183,7 @@ export default async function Home({ searchParams }) {
       <div className="dash-frame">
         <header className="dash-top">
           <Link href="/" className="dash-brand" aria-label="Início">
-            <span className="spark" aria-hidden="true">✺</span>
+            <img src="/mm-emblema.webp" alt="" width="20" height="28" className="spark" />
             <span translate="no">MARTHA MEDEIROS</span>
           </Link>
           <nav className="dash-nav" aria-label="Módulos">
