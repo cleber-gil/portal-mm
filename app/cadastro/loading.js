@@ -2,7 +2,9 @@
 export default function Loading() {
   const rows = Array.from({ length: 10 });
   return (
-    <>
+    <div className="app">
+    <div className="rail" aria-hidden="true" />
+    <div className="main">
     <div className="topbar-skeleton" aria-hidden="true" />
     <main className="page" aria-busy="true" aria-label="Carregando referências">
       <div className="page-head">
@@ -34,6 +36,7 @@ export default function Loading() {
         <p className="small text-2" aria-live="polite">Buscando referências no TOTVS…</p>
       </div>
     </main>
-    </>
+    </div>
+    </div>
   );
 }

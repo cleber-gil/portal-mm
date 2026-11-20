@@ -3,7 +3,9 @@ import "./vendas.css";
 // esqueleto exibido enquanto as vendas são buscadas no TOTVS
 export default function Loading() {
   return (
-    <>
+    <div className="app">
+    <div className="rail" aria-hidden="true" />
+    <div className="main">
     <div className="topbar-skeleton" aria-hidden="true" />
     <main className="page vendas" aria-busy="true" aria-label="Carregando vendas">
       <div className="head">
@@ -33,6 +35,7 @@ export default function Loading() {
       </div>
       <p className="small text-2" aria-live="polite">Buscando vendas no TOTVS…</p>
     </main>
-    </>
+    </div>
+    </div>
   );
 }

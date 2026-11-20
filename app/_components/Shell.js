@@ -14,58 +14,79 @@ function initials(name) {
     .join("");
 }
 
-// casca das páginas logadas: topo com módulos permitidos e quem está logado
+function RailItem({ href, label, icon, active, external }) {
+  const content = (
+    <>
+      <Icon name={icon} size={20} />
+      {external ? <Icon name="externo" size={10} className="ext" /> : null}
+      <span className="tip">{label}</span>
+    </>
+  );
+  return external ? (
+    <a href={href} target="_blank" rel="noreferrer" className="rail-item" aria-label={`${label} (abre em nova aba)`}>
+      {content}
+    </a>
+  ) : (
+    <Link href={href} className={`rail-item${active ? " active" : ""}`} aria-label={label} aria-current={active ? "page" : undefined}>
+      {content}
+    </Link>
+  );
+}
+
+// casca das páginas logadas: trilho lateral flutuante (barra inferior no celular) + área principal
 export default function Shell({ user, active, children }) {
   const allowed = MODULES.filter((m) => user.modules[m.id]);
+  const current = MODULES.find((m) => m.id === active);
+  const manager = user.role === "admin" || user.role === "gestor";
+  const teamLabel = user.role === "admin" ? "Usuários" : "Minha equipe";
   return (
-    <>
+    <div className="app">
       <a href="#conteudo" className="skip-link">
         Pular para o conteúdo
       </a>
-      <header className="topbar">
-        <Link href="/" className="brand" aria-label="Início">
-          <span className="brand-mark" translate="no">MM</span>
-          <span className="brand-name">Portal</span>
+      <aside className="rail" aria-label="Navegação">
+        <Link href="/" className="brand" aria-label="Início" translate="no">
+          MM
         </Link>
-        <nav className="nav" aria-label="Módulos">
-          {allowed.map((m) =>
-            m.type === "internal" ? (
-              <Link key={m.id} href={m.href} className={active === m.id ? "active" : ""}>
-                <Icon name={m.id} size={16} />
-                {m.name}
-              </Link>
-            ) : (
-              <a key={m.id} href={m.href} target="_blank" rel="noreferrer">
-                <Icon name={m.id} size={16} />
-                {m.name}
-                <Icon name="externo" size={12} />
-              </a>
-            )
-          )}
-          {user.role === "admin" || user.role === "gestor" ? (
-            <Link href="/admin/usuarios" className={active === "admin" ? "active" : ""}>
-              <Icon name="usuarios" size={16} />
-              {user.role === "admin" ? "Usuários" : "Minha equipe"}
-            </Link>
-          ) : null}
+        <nav aria-label="Módulos">
+          <RailItem href="/" label="Início" icon="inicio" active={!active} />
+          {allowed.map((m) => (
+            <RailItem key={m.id} href={m.href} label={m.name} icon={m.id} active={active === m.id} external={m.type === "external"} />
+          ))}
+          {manager ? <RailItem href="/admin/usuarios" label={teamLabel} icon="usuarios" active={active === "admin"} /> : null}
         </nav>
-        <div className="userbox" title={user.email}>
-          <span className="who">
-            <b style={{ fontWeight: 600 }}>{user.name}</b>
-            <br />
-            <span className="muted small">{ROLE_NAME[user.role] || user.email}</span>
-          </span>
-          <span className="avatar">{initials(user.name)}</span>
-          <form action={logoutAction}>
-            <button className="btn ghost" type="submit" title="Sair" aria-label="Sair">
-              <Icon name="sair" size={18} />
-            </button>
-          </form>
-        </div>
-      </header>
-      <main className="page" id="conteudo" tabIndex={-1}>
-        {children}
-      </main>
-    </>
+        <span className="spacer" />
+        <form action={logoutAction}>
+          <button className="rail-item" type="submit" aria-label="Sair">
+            <Icon name="sair" size={20} />
+            <span className="tip">Sair</span>
+          </button>
+        </form>
+      </aside>
+      <div className="main">
+        <header className="appbar">
+          <div className="crumb">
+            <span>Portal MM</span>
+            {current || active === "admin" ? (
+              <>
+                <span aria-hidden="true">/</span>
+                <b>{current ? current.name : teamLabel}</b>
+              </>
+            ) : null}
+          </div>
+          <div className="userbox" title={user.email}>
+            <span className="who">
+              <b style={{ fontWeight: 600 }}>{user.name}</b>
+              <br />
+              <span className="muted small">{ROLE_NAME[user.role] || user.email}</span>
+            </span>
+            <span className="avatar">{initials(user.name)}</span>
+          </div>
+        </header>
+        <main className="page" id="conteudo" tabIndex={-1}>
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }

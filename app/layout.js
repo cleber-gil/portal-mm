@@ -7,7 +7,7 @@ export const metadata = {
   description: "Portal interno Martha Medeiros",
 };
 
-export const viewport = { themeColor: "#fafaf9" };
+export const viewport = { themeColor: "#dfe9ef" };
 
 export default function RootLayout({ children }) {
   return (

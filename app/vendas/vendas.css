@@ -1,5 +1,5 @@
 /* Módulo Painel de Vendas — estilos próprios, sempre sob .vendas para não vazar */
-.vendas { --track: #efefec; }
+.vendas { --track: #edf2f5; }
 .vendas .head { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 32px; align-items: end; margin-bottom: 24px; }
 .vendas .head h1 { font-size: 28px; letter-spacing: -0.035em; margin-top: 10px; }
 .vendas .head p { color: var(--text-2); margin-top: 8px; max-width: 60ch; }
@@ -8,33 +8,33 @@
 .vendas .filters {
   display: grid; grid-template-columns: repeat(2, minmax(130px, 150px)) repeat(5, minmax(140px, 1fr)) auto;
   gap: 12px; align-items: end;
-  padding: 16px 0 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 24px;
+  padding: 18px 20px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow); border: 1px solid rgba(255, 255, 255, 0.8); margin-bottom: 18px;
 }
 .vendas .filters .field { min-width: 0; }
 .vendas .filters input, .vendas .filters select { width: 100%; }
 
-.vendas .metrics { grid-template-columns: 1.6fr 1fr 1fr 1fr; border: 0; margin-bottom: 36px; }
-.vendas .metric { padding: 4px 24px 4px 0; }
-.vendas .metric + .metric { padding-left: 24px; }
+.vendas .metrics { grid-template-columns: 1.6fr 1fr 1fr 1fr; margin-bottom: 18px; }
 .vendas .metric .value { font-size: 30px; }
 .vendas .metric.primary .value { font-size: 44px; }
 
-.vendas .charts { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 40px; margin-bottom: 40px; }
+.vendas .charts { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 18px; margin-bottom: 18px; }
+.vendas .charts > * { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow); border: 1px solid rgba(255, 255, 255, 0.8); padding: 20px 22px; transition: transform .35s var(--spring), box-shadow .3s var(--ease); }
+.vendas .charts > *:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
 .vendas .section-title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 16px; }
 .vendas .section-title h2 { font-size: 15px; }
 .vendas .bars { display: flex; flex-direction: column; gap: 12px; }
 .vendas .bar { display: grid; grid-template-columns: minmax(0, 180px) minmax(0, 1fr) 88px; gap: 12px; align-items: center; }
 .vendas .bar .name { font-size: 13px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.vendas .bar .track { height: 10px; background: var(--track); border-radius: 999px; overflow: hidden; }
+.vendas .bar .track { height: 12px; background: var(--track); border-radius: 999px; overflow: hidden; }
 .vendas .bar .fill {
-  display: block; height: 100%; width: 100%; background: var(--accent); border-radius: 999px;
+  display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--accent-2), var(--accent)); border-radius: 999px;
   transform-origin: left center; transform: scaleX(var(--w, 0));
   animation: vendas-grow .8s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms);
 }
 .vendas .bar.muted-row .fill { background: var(--line-strong); }
 .vendas .bar .val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; }
 
-.vendas .tables { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+.vendas .tables { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
 .vendas th.num, .vendas td.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .vendas .chip.warn { background: var(--warn-soft); color: var(--warn); }
 .vendas .alert.warn { color: var(--warn); background: var(--warn-soft); border-color: transparent; }
@@ -52,6 +52,5 @@
   .vendas .filters { grid-template-columns: 1fr 1fr; }
   .vendas .metrics { grid-template-columns: 1fr 1fr; row-gap: 20px; }
   .vendas .metric.primary { grid-column: 1 / -1; }
-  .vendas .metric + .metric { padding-left: 0; border-left: none; }
   .vendas .bar { grid-template-columns: minmax(0, 110px) minmax(0, 1fr) 72px; }
 }

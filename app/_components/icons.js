@@ -21,6 +21,7 @@ import {
   Funnel,
   Buildings,
   ChatsCircle,
+  House,
 } from "@phosphor-icons/react";
 
 const WEIGHT = "regular";
@@ -46,6 +47,7 @@ export function Icon({ name, size = 18, ...rest }) {
     filtro: Funnel,
     grupo: Buildings,
     crm: ChatsCircle,
+    inicio: House,
   };
   const C = map[name];
   return C ? <C size={size} weight={WEIGHT} aria-hidden="true" {...rest} /> : null;
