@@ -249,8 +249,8 @@ tr:last-child td { border-bottom: none; }
 @keyframes pulse { 0% { opacity: .6; transform: scale(.6); } 70%, 100% { opacity: 0; transform: scale(1.6); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal, .bulkbar, .page, .metric, .metric.primary::after, .hero::after, .rail-item.active::before { animation: none; }
-  .card-hover:hover, .metric:hover, .module:hover, .rail-item:hover, .btn:hover { transform: none; }
+  .reveal, .bulkbar, .page, .metric, .metric.primary::after, .rail-item.active::before { animation: none; }
+  .card-hover:hover, .metric:hover, .rail-item:hover, .btn:hover { transform: none; }
   .skeleton::after, .live-dot::after { animation: none; }
   .btn:active { transform: none; }
 }
@@ -274,42 +274,6 @@ tr:last-child td { border-bottom: none; }
 .auth-main { display: grid; align-content: center; padding: 48px clamp(24px, 6vw, 88px); }
 .auth-form { width: 100%; max-width: 400px; background: var(--surface); padding: 32px; border-radius: var(--radius-xl); box-shadow: var(--shadow); animation: rise .6s var(--ease) backwards; }
 
-/* ---------- início ---------- */
-.hero {
-  position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center;
-  padding: 30px 34px; border-radius: var(--radius-xl); color: #f4f8fa;
-  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-2) 100%);
-  box-shadow: 0 30px 60px -32px rgba(20, 34, 48, 0.7); margin-bottom: 18px;
-}
-.hero::after {
-  content: ""; position: absolute; right: 8%; top: -70%; width: 340px; height: 340px; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle, rgba(238, 154, 48, 0.5), rgba(238, 154, 48, 0) 65%); animation: glow 7s ease-in-out infinite alternate;
-}
-.hero > * { position: relative; z-index: 1; }
-.hero h1 { font-size: 30px; letter-spacing: -0.035em; }
-.hero h1 em { font-style: normal; color: var(--accent-2); }
-.hero p { color: #a9bac6; margin-top: 8px; max-width: 56ch; }
-.hero .hero-side { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-.pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; font-size: 12px; background: rgba(255, 255, 255, 0.08); color: #dfe8ee; }
-.pill.accent { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--ink); font-weight: 600; }
-.module-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
-.module {
-  position: relative; display: grid; grid-template-rows: auto 1fr auto; gap: 14px; min-height: 196px;
-  padding: 22px; border-radius: var(--radius-lg); text-decoration: none; background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: var(--shadow);
-  transition: transform .4s var(--spring), box-shadow .3s var(--ease);
-}
-.module:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
-.module .icon {
-  width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center;
-  background: var(--surface-2); color: var(--text); transition: background .3s var(--ease), color .3s var(--ease), transform .45s var(--spring);
-}
-.module:hover .icon { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--ink); transform: rotate(-6deg) scale(1.08); }
-.module h3 { font-size: 16px; }
-.module .meta { display: flex; justify-content: space-between; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; }
-.module .go { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); color: var(--text-2); transition: transform .4s var(--spring), background .3s; }
-.module:hover .go { background: var(--ink); color: #fff; transform: rotate(45deg); }
-
 /* ---------- responsivo: trilho vira barra inferior flutuante ---------- */
 @media (max-width: 900px) {
   .app { grid-template-columns: 1fr; padding: 12px 12px 96px; gap: 0; }
@@ -331,9 +295,6 @@ tr:last-child td { border-bottom: none; }
   .auth-side .statement h1 { font-size: 26px; }
   .auth-main { padding: 20px 12px 40px; }
   .auth-form { padding: 24px; }
-  .hero { grid-template-columns: 1fr; padding: 24px; }
-  .hero .hero-side { justify-content: flex-start; }
-  .hero h1 { font-size: 24px; }
   .metrics { grid-template-columns: 1fr 1fr; gap: 10px; }
   .metric:first-child { grid-column: 1 / -1; }
   .bulkbar { grid-template-columns: 1fr; bottom: 92px; }
