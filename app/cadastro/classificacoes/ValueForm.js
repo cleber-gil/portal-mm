@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { saveValueAction } from "./actions";
 
 function Submit({ label }) {
@@ -14,7 +15,7 @@ function Submit({ label }) {
 
 // novo valor (sem code) ou renomear (com code)
 export default function ValueForm({ typeCode, value, compact }) {
-  const [state, action] = useFormState(saveValueAction, null);
+  const [state, action] = useActionState(saveValueAction, null);
   return (
     <form action={action} className="row" style={{ gap: 8 }}>
       <input type="hidden" name="typeCode" value={typeCode} />

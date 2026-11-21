@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Icon } from "./icons";
 import PasswordInput from "./PasswordInput";
 
@@ -15,7 +16,7 @@ function Submit({ label }) {
 
 // formulário genérico de login/setup ligado a uma server action
 export default function AuthForm({ action, fields, submitLabel }) {
-  const [state, formAction] = useFormState(action, null);
+  const [state, formAction] = useActionState(action, null);
   return (
     <form action={formAction} className="stack" style={{ gap: 16 }}>
       {state?.error ? (

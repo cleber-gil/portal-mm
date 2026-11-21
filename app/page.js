@@ -206,7 +206,8 @@ async function StockCard({ k }) {
   );
 }
 
-export default async function Home({ searchParams }) {
+export default async function Home({ searchParams: searchParamsPromise }) {
+  const searchParams = await searchParamsPromise;
   const user = await requireUser();
   const allowed = MODULES.filter((m) => user.modules[m.id]);
   const denied = searchParams?.negado;

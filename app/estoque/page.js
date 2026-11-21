@@ -11,7 +11,8 @@ export const metadata = { title: "Estoque" };
 // ?aba=lojas|matriz|consignacao|condicional e ?loja=<código> abrem a tela já filtrada (atalhos da tela inicial)
 const ABAS = { lojas: "stores", matriz: "matrix", consignacao: "consignment", condicional: "conditional" };
 
-export default async function EstoquePage({ searchParams }) {
+export default async function EstoquePage({ searchParams: searchParamsPromise }) {
+  const searchParams = await searchParamsPromise;
   const user = await requireModule("estoque", "view");
   const allowed = visibleBranches(user); // null = todas
   const branches = allowed === null ? BRANCHES : BRANCHES.filter((b) => allowed.includes(b.code));

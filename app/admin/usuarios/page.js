@@ -13,7 +13,8 @@ export const metadata = { title: "Usuários" };
 const DATE_FMT = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo" });
 const fmt = (d) => (d ? DATE_FMT.format(new Date(d)) : "—");
 
-export default async function UsersPage({ searchParams }) {
+export default async function UsersPage({ searchParams: searchParamsPromise }) {
+  const searchParams = await searchParamsPromise;
   const actor = await requireManager();
   await ensureSchema();
   const db = sql();

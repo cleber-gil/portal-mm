@@ -8,7 +8,8 @@ import { CLASSIFICATION_TYPES, listClassificationValues } from "@/lib/totvs/prod
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Famílias e classificações" };
 
-export default async function ClassificacoesPage({ searchParams }) {
+export default async function ClassificacoesPage({ searchParams: searchParamsPromise }) {
+  const searchParams = await searchParamsPromise;
   const user = await requireModule("cadastro", "view");
   const canEdit = canAccess(user, "cadastro", "edit");
   const typeCode = Number(searchParams?.tipo || 104);

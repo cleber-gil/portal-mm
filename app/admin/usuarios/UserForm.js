@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
 import PasswordInput from "../../_components/PasswordInput";
 
 function Submit({ label }) {
@@ -17,7 +17,7 @@ const RANK = { view: 1, edit: 2 };
 
 // formulário de criar/editar usuário; só oferece o que o ator pode conceder
 export default function UserForm({ action, actor, modules, levels, branches, roles, managers, user, submitLabel }) {
-  const [state, formAction] = useFormState(action, null);
+  const [state, formAction] = useActionState(action, null);
   const editing = !!user;
   const actorIsAdmin = actor.role === "admin";
   const [role, setRole] = useState(user?.role || "usuario");
@@ -104,12 +104,17 @@ export default function UserForm({ action, actor, modules, levels, branches, rol
           <input
             name="crm_cpf"
             defaultValue={user?.crm_cpf || ""}
+            disabled={actor?.role !== "admin"}
             inputMode="numeric"
             autoComplete="off"
             spellCheck={false}
             placeholder="000.000.000-00…"
           />
-          <span className="help">Obrigatório para liberar o CRM. Define a carteira de clientes dela.</span>
+          <span className="help">
+            {actor?.role === "admin"
+              ? "Obrigatório para liberar o CRM. Define a carteira de clientes dela."
+              : "Só o administrador vincula o CPF. Sem ele, a vendedora não abre o CRM."}
+          </span>
         </label>
       ) : null}
 

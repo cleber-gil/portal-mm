@@ -10,7 +10,8 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Cadastro de Produtos" };
 export const maxDuration = 60;
 
-export default async function CadastroPage({ searchParams }) {
+export default async function CadastroPage({ searchParams: searchParamsPromise }) {
+  const searchParams = await searchParamsPromise;
   const user = await requireModule("cadastro", "view");
   const canEdit = canAccess(user, "cadastro", "edit");
 

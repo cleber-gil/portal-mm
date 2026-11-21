@@ -111,7 +111,8 @@ function Empty({ text }) {
 }
 
 // ---------- página ----------
-export default async function VendasPage({ searchParams }) {
+export default async function VendasPage({ searchParams: searchParamsPromise }) {
+  const searchParams = await searchParamsPromise;
   const user = await requireModule("vendas", "view");
   const allowedBranches = visibleBranches(user); // null = todas
   const defaults = defaultDates();

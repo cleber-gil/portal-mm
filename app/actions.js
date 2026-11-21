@@ -19,7 +19,7 @@ export async function loginAction(_prev, formData) {
 }
 
 export async function logoutAction() {
-  logout();
+  await logout();
   redirect("/login");
 }
 

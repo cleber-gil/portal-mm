@@ -13,7 +13,8 @@ import { canManageTarget } from "@/lib/core/access";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Editar usuário" };
 
-export default async function EditUserPage({ params }) {
+export default async function EditUserPage({ params: paramsPromise }) {
+  const params = await paramsPromise;
   const actor = await requireManager();
   await ensureSchema();
   const db = sql();

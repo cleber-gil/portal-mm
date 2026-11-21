@@ -24,18 +24,42 @@ function readWanted(formData) {
   };
 }
 
-// CPF só com dígitos (11); vazio = sem vínculo com o CRM
+// CPF só com dígitos (11); vazio = sem vínculo com o CRM; "" inválido = false
 function cleanCpf(v) {
   const d = String(v || "").replace(/\D/g, "");
-  return d ? d.slice(-11).padStart(11, "0") : null;
+  if (!d) return null;
+  return validCpf(d) ? d : false;
 }
 
-function crmError(wanted, grant) {
-  if (grant.role === "usuario" && grant.modules.crm && !wanted.crmCpf) {
-    return "Para liberar o CRM a um usuário, informe o CPF da vendedora (é ele que define a carteira).";
-  }
-  return null;
+function validCpf(d) {
+  if (!/^\d{11}$/.test(d) || /^(\d)\1{10}$/.test(d)) return false;
+  const dv = (len) => {
+    let sum = 0;
+    for (let i = 0; i < len; i++) sum += Number(d[i]) * (len + 1 - i);
+    const r = (sum * 10) % 11;
+    return r === 10 ? 0 : r;
+  };
+  return dv(9) === Number(d[9]) && dv(10) === Number(d[10]);
 }
+
+// O CPF define a carteira da vendedora no CRM: só o administrador vincula ou troca.
+// Gestor pode liberar o módulo; a vendedora só abre o CRM depois que o admin vincular o CPF.
+async function resolveCrmCpf(actor, wanted, grant, targetId, currentCpf) {
+  if (!isAdmin(actor)) return { cpf: currentCpf ?? null };
+  if (wanted.crmCpf === false) return { error: "CPF da vendedora inválido." };
+  const cpf = grant.role === "usuario" ? wanted.crmCpf : null;
+  if (grant.role === "usuario" && grant.modules.crm && !cpf) {
+    return { error: "Para liberar o CRM a um usuário, informe o CPF da vendedora (é ele que define a carteira)." };
+  }
+  if (cpf) {
+    const [dup] = await sql()`SELECT name FROM users WHERE crm_cpf = ${cpf} AND id IS DISTINCT FROM ${targetId}`;
+    if (dup) return { error: `Esse CPF já está vinculado a ${dup.name}.` };
+  }
+  return { cpf };
+}
+
+// no log de auditoria só os 3 últimos dígitos (LGPD: minimização)
+const maskCpf = (c) => (c ? `***.***.*${c.slice(-3, -2)}-${c.slice(-2)}` : null);
 
 async function saveGrant(userId, grant) {
   const db = sql();
@@ -69,8 +93,8 @@ export async function createUserAction(_prev, formData) {
   const wanted = readWanted(formData);
   const grant = sanitizeGrant(actor, wanted);
   if (!(await validManager(actor, grant))) return { error: "Escolha um gestor ativo como responsável." };
-  const crmErr = crmError(wanted, grant);
-  if (crmErr) return { error: crmErr };
+  const crm = await resolveCrmCpf(actor, wanted, grant, null, null);
+  if (crm.error) return { error: crm.error };
   if (grant.role !== "admin" && !grant.allBranches && grant.branches.length === 0) {
     return { error: "Marque pelo menos uma filial (ou todas)." };
   }
@@ -80,9 +104,9 @@ export async function createUserAction(_prev, formData) {
   if (exists) return { error: "Já existe um usuário com esse e-mail." };
   const [u] = await db`INSERT INTO users (name, email, password_hash)
     VALUES (${name}, ${email}, ${await hashPassword(password)}) RETURNING id`;
-  await db`UPDATE users SET crm_cpf = ${wanted.crmCpf} WHERE id = ${u.id}`;
+  await db`UPDATE users SET crm_cpf = ${crm.cpf} WHERE id = ${u.id}`;
   await saveGrant(u.id, grant);
-  await audit(actor.id, "admin", "criar_usuario", { userId: u.id, email, crmCpf: wanted.crmCpf, ...grant });
+  await audit(actor.id, "admin", "criar_usuario", { userId: u.id, email, crmCpf: maskCpf(crm.cpf), ...grant });
   revalidatePath("/admin/usuarios");
   return { ok: `Usuário ${name} criado.` };
 }
@@ -92,7 +116,7 @@ export async function updateUserAction(_prev, formData) {
   await ensureSchema();
   const id = Number(formData.get("id"));
   const db = sql();
-  const [target] = await db`SELECT id, role, manager_id FROM users WHERE id = ${id}`;
+  const [target] = await db`SELECT id, role, manager_id, crm_cpf FROM users WHERE id = ${id}`;
   if (!target) return { error: "Usuário não encontrado." };
   if (id === actor.id) return { error: "Para mudar o seu próprio acesso, peça a outro administrador." };
   if (!canManageTarget(actor, target)) return { error: "Este usuário não é da sua equipe." };
@@ -106,20 +130,20 @@ export async function updateUserAction(_prev, formData) {
   const wanted = readWanted(formData);
   const grant = sanitizeGrant(actor, wanted);
   if (!(await validManager(actor, grant))) return { error: "Escolha um gestor ativo como responsável." };
-  const crmErr = crmError(wanted, grant);
-  if (crmErr) return { error: crmErr };
+  const crm = await resolveCrmCpf(actor, wanted, grant, id, target.crm_cpf);
+  if (crm.error) return { error: crm.error };
   if (grant.role !== "admin" && !grant.allBranches && grant.branches.length === 0) {
     return { error: "Marque pelo menos uma filial (ou todas)." };
   }
 
-  await db`UPDATE users SET name = ${name}, active = ${active}, crm_cpf = ${wanted.crmCpf} WHERE id = ${id}`;
+  await db`UPDATE users SET name = ${name}, active = ${active}, crm_cpf = ${crm.cpf} WHERE id = ${id}`;
   if (password) await db`UPDATE users SET password_hash = ${await hashPassword(password)} WHERE id = ${id}`;
   await saveGrant(id, grant);
   // se deixou de ser gestor, a equipe dele fica sem responsável (volta para o admin)
   if (target.role === "gestor" && grant.role !== "gestor") {
     await db`UPDATE users SET manager_id = NULL WHERE manager_id = ${id}`;
   }
-  await audit(actor.id, "admin", "alterar_usuario", { userId: id, active, senhaAlterada: !!password, crmCpf: wanted.crmCpf, ...grant });
+  await audit(actor.id, "admin", "alterar_usuario", { userId: id, active, senhaAlterada: !!password, crmCpf: maskCpf(crm.cpf), ...grant });
   revalidatePath("/admin/usuarios");
   redirect("/admin/usuarios?salvo=1");
 }
