@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { login, logout, hashPassword, userCount } from "@/lib/core/auth";
+import { login, logout, hashPassword, userCount, LoginLockedError } from "@/lib/core/auth";
 import { sql, ensureSchema } from "@/lib/core/db";
 
 export async function loginAction(_prev, formData) {
@@ -12,7 +12,10 @@ export async function loginAction(_prev, formData) {
   try {
     ok = await login(email, password);
   } catch (e) {
-    return { error: e.message || "Erro ao entrar." };
+    if (e instanceof LoginLockedError) return { error: e.message };
+    // detalhe técnico fica no log do servidor; a tela de login é pública
+    console.error("login:", e);
+    return { error: "Não foi possível entrar agora. Tente de novo em instantes." };
   }
   if (!ok) return { error: "E-mail ou senha inválidos." };
   redirect("/");

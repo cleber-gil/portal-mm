@@ -126,10 +126,12 @@ export default async function VendasPage({ searchParams: searchParamsPromise }) 
 
   let report = null;
   let errorMsg = "";
+  let rangeError = false;
   try {
     report = await getReport({ start, end, branch, collection, client, family, scope, allowedBranches });
   } catch (e) {
     errorMsg = e.message || String(e);
+    rangeError = e.code === "PERIODO_INVALIDO";
   }
 
   const opts = report?.branchOptions || [];
@@ -249,8 +251,9 @@ export default async function VendasPage({ searchParams: searchParamsPromise }) 
             <div className="alert error" role="alert">
               <Icon name="erro" />
               <span>
-                Não foi possível buscar as vendas no TOTVS: {errorMsg}. Tente de novo em alguns minutos ou reduza o
-                período.
+                {rangeError
+                  ? errorMsg
+                  : `Não foi possível buscar as vendas no TOTVS: ${errorMsg}. Tente de novo em alguns minutos ou reduza o período.`}
               </span>
             </div>
           ) : (
