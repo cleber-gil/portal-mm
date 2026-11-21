@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
+import PasswordInput from "../../_components/PasswordInput";
 
 function Submit({ label }) {
   const { pending } = useFormStatus();
@@ -40,7 +41,7 @@ export default function UserForm({ action, actor, modules, levels, branches, rol
       ) : null}
       {editing ? <input type="hidden" name="id" value={user.id} /> : null}
 
-      <div className="row">
+      <div className="row top">
         <label className="field" style={{ flex: "1 1 200px" }}>
           <span>Nome</span>
           <input name="name" defaultValue={user?.name || ""} autoComplete="off" required />
@@ -59,13 +60,13 @@ export default function UserForm({ action, actor, modules, levels, branches, rol
         </label>
         <label className="field" style={{ flex: "1 1 180px" }}>
           <span>{editing ? "Nova senha" : "Senha inicial"}</span>
-          <input name="password" type="password" autoComplete="new-password" required={!editing} minLength={8} />
+          <PasswordInput name="password" autoComplete="new-password" required={!editing} minLength={8} />
           <span className="help">{editing ? "Deixe vazio para manter a atual." : "Mínimo de 8 caracteres."}</span>
         </label>
       </div>
 
       {actorIsAdmin ? (
-        <div className="row">
+        <div className="row top">
           <label className="field" style={{ flex: "0 1 220px" }}>
             <span>Perfil</span>
             <select name="role" value={role} onChange={(e) => setRole(e.target.value)}>

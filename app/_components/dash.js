@@ -145,7 +145,7 @@ export function MonthDial({ today, days }) {
 }
 
 // rosa dos ventos das lojas (como "Wind & Nacelle"): cada loja um ponto, tamanho pelo saldo
-export function StoreCompass({ stores }) {
+export function StoreCompass({ stores, hrefFor }) {
   const max = Math.max(...stores.map((s) => s.stock), 1);
   const n = Math.max(stores.length, 1);
   return (
@@ -171,13 +171,16 @@ export function StoreCompass({ stores }) {
         const [x, y] = polar(110, 110, 22 + 50 * share, deg);
         const [lx, ly] = polar(110, 110, 102, deg);
         return (
-          <g key={s.code} style={{ "--i": i }} className="store">
+          <a key={s.code} href={hrefFor ? hrefFor(s) : undefined} aria-label={`${s.name}: ${s.stock} peças`}>
+          <g style={{ "--i": i }} className="store">
             <line x1="110" y1="110" x2={x} y2={y} stroke="#f6c27a" strokeWidth="1" />
+            <circle cx={x} cy={y} r="14" fill="transparent" />
             <circle cx={x} cy={y} r={3 + 5 * share} fill="#ee9a30" fillOpacity={0.35 + 0.65 * share} />
             <text x={lx} y={ly + 3} textAnchor="middle" fontSize="8.5" fill="#7d8b96">
               {s.name.slice(0, 3).toUpperCase()}
             </text>
           </g>
+          </a>
         );
       })}
       <circle cx="110" cy="110" r="5" fill="#ee9a30" stroke="#fff" strokeWidth="2" />

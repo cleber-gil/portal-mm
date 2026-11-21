@@ -26,33 +26,51 @@ function greeting() {
 }
 const initials = (n) => String(n || "?").split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join("");
 
-function Card({ title, href, className = "", i = 0, children }) {
+// whole: o cartão inteiro é o link; senão só a seta do canto (e os itens internos levam a ações próprias)
+function Card({ title, href, whole = false, className = "", i = 0, children }) {
+  const head = (
+    <header>
+      <h2>{title}</h2>
+      {href ? (
+        whole ? (
+          <span className="dcard-go" aria-hidden="true"><Icon name="externo" size={15} /></span>
+        ) : (
+          <Link href={href} className="dcard-go" aria-label={`Abrir ${title}`}><Icon name="externo" size={15} /></Link>
+        )
+      ) : null}
+    </header>
+  );
+  if (href && whole) {
+    return (
+      <Link href={href} className={`dcard is-link ${className}`} style={{ "--i": i }} aria-label={title}>
+        {head}
+        {children}
+      </Link>
+    );
+  }
   return (
     <section className={`dcard ${className}`} style={{ "--i": i }}>
-      <header>
-        <h2>{title}</h2>
-        {href ? (
-          <Link href={href} className="dcard-go" aria-label={`Abrir ${title}`}>
-            <Icon name="externo" size={15} />
-          </Link>
-        ) : null}
-      </header>
+      {head}
       {children}
     </section>
   );
 }
 
-function Stat({ label, value, unit }) {
-  return (
-    <div className="dstat">
+function Stat({ label, value, unit, href, hint }) {
+  const inner = (
+    <>
       <span>{label}</span>
       <b>
         {value}
         {unit ? <small>{unit}</small> : null}
       </b>
-    </div>
+      {hint ? <em className="dstat-hint">{hint} →</em> : null}
+    </>
   );
+  return href ? <Link href={href} className="dstat is-link">{inner}</Link> : <div className="dstat">{inner}</div>;
 }
+
+const monthQ = (m) => `start=${m.month.start}&end=${m.month.end}`;
 
 const Fail = ({ title, className, i }) => (
   <Card title={title} className={className} i={i}>
@@ -73,13 +91,14 @@ async function HeroData({ k }) {
   return (
     <div className="hero-figure">
       <HeroGauge value={m.elapsed} label={`${Math.round(m.elapsed * 100)}% do mês`} />
-      <div className="hero-read">
+      <Link href={`/vendas?${monthQ(m)}`} className="hero-read is-link">
         <span className="eyebrow">Vendido em {m.month.label}</span>
         <b className="mono">{BRL.format(m.net)}</b>
         <span className="text-2 small">
           Projeção do mês <b className="mono">{BRL_C.format(m.projection)}</b>
         </span>
-      </div>
+        <em className="dstat-hint">Ver vendas do mês →</em>
+      </Link>
     </div>
   );
 }
@@ -90,7 +109,7 @@ async function DaysCard({ k }) {
   const maxNet = Math.max(...m.days.map((d) => d.net), 0);
   const maxQty = Math.max(...m.days.map((d) => d.quantity), 0);
   return (
-    <Card title="Vendas por dia" href="/vendas" className="c-days" i={1}>
+    <Card title="Vendas por dia" href={`/vendas?${monthQ(m)}`} whole className="c-days" i={1}>
       <div className="days-wrap">
         <span className="axis left mono">{INT.format(maxQty)}<br />pçs</span>
         <DayBars days={m.days} today={m.month.today} />
@@ -109,7 +128,7 @@ async function TopBranchCard({ k }) {
   if (m.error) return <Fail title="Loja destaque" className="c-top" i={2} />;
   const t = m.topBranch;
   return (
-    <Card title="Loja destaque" className="c-top" i={2}>
+    <Card title="Loja destaque" href={t ? `/vendas?${monthQ(m)}&branch=${t.code}` : `/vendas?${monthQ(m)}`} whole className="c-top" i={2}>
       <b className="big mono">{t ? PCT.format(t.share) : "—"}</b>
       <HalfGauge value={t?.share || 0} center={t ? BRL_C.format(t.net) : "—"} sub={t ? t.name : "sem vendas"} />
     </Card>
@@ -121,7 +140,7 @@ async function ReturnsCard({ k }) {
   if (m.error) return <Fail title="Vendas sem devolução" className="c-ret" i={3} />;
   const last = m.days.slice(0, m.month.today).slice(-10).map((d) => d.count);
   return (
-    <Card title="Vendas sem devolução" className="c-ret" i={3}>
+    <Card title="Vendas sem devolução" href={`/vendas?${monthQ(m)}`} whole className="c-ret" i={3}>
       <b className="big mono">{PCT.format(1 - m.returnRate)}</b>
       <DotColumns values={last} />
       <span className="small muted">Vendas por dia · últimos {last.length} dias</span>
@@ -133,15 +152,15 @@ async function OverviewCard({ k }) {
   const m = await getMonthSales(k);
   if (m.error) return <Fail title="Resumo do mês" className="c-over" i={4} />;
   return (
-    <Card title={`Resumo de ${m.month.label}`} href="/vendas" className="c-over" i={4}>
+    <Card title={`Resumo de ${m.month.label}`} href={`/vendas?${monthQ(m)}`} className="c-over" i={4}>
       <div className="split">
         <div className="stats">
-          <Stat label="Valor líquido" value={BRL_C.format(m.net)} />
-          <Stat label="Peças vendidas" value={INT.format(m.quantity)} unit="pçs" />
-          <Stat label="Vendas" value={INT.format(m.count)} unit="un." />
-          <Stat label="Ticket médio" value={BRL.format(m.ticket)} />
+          <Stat label="Valor líquido" value={BRL_C.format(m.net)} href={`/vendas?${monthQ(m)}`} hint="Painel" />
+          <Stat label="Peças vendidas" value={INT.format(m.quantity)} unit="pçs" href={`/vendas?${monthQ(m)}#t-produtos`} hint="Produtos" />
+          <Stat label="Vendas" value={INT.format(m.count)} unit="un." href={`/vendas?${monthQ(m)}#t-clientes`} hint="Clientes" />
+          <Stat label="Ticket médio" value={BRL.format(m.ticket)} href={`/vendas?${monthQ(m)}#t-filial`} hint="Por filial" />
         </div>
-        <MonthDial today={m.month.today} days={m.month.daysInMonth} />
+        <Link href={`/vendas?${monthQ(m)}`} className="dial-link" aria-label="Ver vendas do mês"><MonthDial today={m.month.today} days={m.month.daysInMonth} /></Link>
       </div>
     </Card>
   );
@@ -154,12 +173,12 @@ async function StockCard({ k }) {
     <Card title="Estoque nas lojas" href="/estoque" className="c-stock" i={5}>
       <div className="split">
         <div className="stats">
-          <Stat label="Peças em loja" value={INT.format(s.pieces)} unit="pçs" />
-          <Stat label="Referências" value={INT.format(s.references)} unit="refs" />
-          <Stat label="Em condicional" value={s.conditionalPieces == null ? "—" : INT.format(s.conditionalPieces)} unit="pçs" />
-          <Stat label="Clientes c/ condicional" value={s.conditionalClients == null ? "—" : INT.format(s.conditionalClients)} />
+          <Stat label="Peças em loja" value={INT.format(s.pieces)} unit="pçs" href="/estoque?aba=lojas" hint="Saldo" />
+          <Stat label="Referências" value={INT.format(s.references)} unit="refs" href="/estoque?aba=lojas" hint="Produtos" />
+          <Stat label="Em condicional" value={s.conditionalPieces == null ? "—" : INT.format(s.conditionalPieces)} unit="pçs" href="/estoque?aba=condicional" hint="Condicional" />
+          <Stat label="Clientes c/ condicional" value={s.conditionalClients == null ? "—" : INT.format(s.conditionalClients)} href="/estoque?aba=condicional" hint="Cobrar" />
         </div>
-        <StoreCompass stores={s.branches} />
+        <StoreCompass stores={s.branches} hrefFor={(b) => `/estoque?aba=lojas&loja=${b.code}`} />
       </div>
     </Card>
   );

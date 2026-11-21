@@ -2,6 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { Icon } from "./icons";
+import PasswordInput from "./PasswordInput";
 
 function Submit({ label }) {
   const { pending } = useFormStatus();
@@ -26,13 +27,17 @@ export default function AuthForm({ action, fields, submitLabel }) {
       {fields.map((f) => (
         <label key={f.name} className="field">
           <span>{f.label}</span>
-          <input
-            name={f.name}
-            type={f.type || "text"}
-            autoComplete={f.autoComplete || "off"}
-            spellCheck={f.type === "email" ? false : undefined}
-            required
-          />
+          {f.type === "password" ? (
+            <PasswordInput name={f.name} autoComplete={f.autoComplete || "current-password"} required />
+          ) : (
+            <input
+              name={f.name}
+              type={f.type || "text"}
+              autoComplete={f.autoComplete || "off"}
+              spellCheck={f.type === "email" ? false : undefined}
+              required
+            />
+          )}
           {f.help ? <span className="help">{f.help}</span> : null}
         </label>
       ))}

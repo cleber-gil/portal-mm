@@ -128,6 +128,14 @@ p { margin: 0; }
 .card-hover:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
 .stack { display: flex; flex-direction: column; gap: 20px; }
 .row { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+.row.top { align-items: flex-start; } /* formulários: campos alinhados pelo rótulo, ajuda embaixo não desalinha */
+.pw { position: relative; display: flex; }
+.pw input { flex: 1; width: 100%; padding-right: 46px; }
+.pw-eye {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border: 0; border-radius: 10px;
+  display: grid; place-items: center; background: transparent; color: var(--muted); cursor: pointer; transition: color .2s, background .2s;
+}
+.pw-eye:hover, .pw-eye[aria-pressed="true"] { color: var(--text); background: var(--surface-2); }
 .divide > * + * { border-top: 1px solid var(--line); }
 
 /* ---------- formulários ---------- */

@@ -22,6 +22,8 @@ import {
   Buildings,
   ChatsCircle,
   House,
+  Eye,
+  EyeSlash,
 } from "@phosphor-icons/react";
 
 const WEIGHT = "regular";
@@ -48,6 +50,8 @@ export function Icon({ name, size = 18, ...rest }) {
     grupo: Buildings,
     crm: ChatsCircle,
     inicio: House,
+    ver: Eye,
+    ocultar: EyeSlash,
   };
   const C = map[name];
   return C ? <C size={size} weight={WEIGHT} aria-hidden="true" {...rest} /> : null;

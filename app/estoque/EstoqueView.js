@@ -54,14 +54,14 @@ function Bars({ title, rows }) {
   );
 }
 
-export default function EstoqueView({ branches, restricted, canMatrix }) {
+export default function EstoqueView({ branches, restricted, canMatrix, initialView = "stores", initialBranch = "" }) {
   const views = VIEWS.filter((v) => v.id !== "matrix" || canMatrix);
   const nameOf = useMemo(() => Object.fromEntries(branches.map((b) => [b.code, b.name])), [branches]);
-  const [view, setView] = useState("stores");
+  const [view, setView] = useState(VIEWS.some((v) => v.id === initialView) && (initialView !== "matrix" || canMatrix) ? initialView : "stores");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [branch, setBranch] = useState("");
+  const [branch, setBranch] = useState(branches.some((b) => String(b.code) === String(initialBranch)) ? String(initialBranch) : "");
   const [search, setSearch] = useState("");
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
