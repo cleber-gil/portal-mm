@@ -14,12 +14,13 @@ function initials(name) {
     .join("");
 }
 
-function RailItem({ href, label, icon, active, external }) {
+function RailItem({ href, label, short, icon, active, external }) {
   const content = (
     <>
       <Icon name={icon} size={20} />
       {external ? <Icon name="externo" size={10} className="ext" /> : null}
       <span className="tip">{label}</span>
+      <span className="lbl" aria-hidden="true">{short || label}</span>
     </>
   );
   return external ? (
@@ -33,36 +34,48 @@ function RailItem({ href, label, icon, active, external }) {
   );
 }
 
-// casca das páginas logadas: trilho lateral flutuante (barra inferior no celular) + área principal
-export default function Shell({ user, active, children }) {
+// nomes curtos para a barra inferior do celular
+const SHORT = { cadastro: "Cadastro", vendas: "Vendas", estoque: "Estoque", crm: "CRM" };
+
+// navegação única: trilho lateral no computador, barra inferior com rótulos no celular
+export function RailNav({ user, active, className = "" }) {
   const allowed = MODULES.filter((m) => user.modules[m.id]);
-  const current = MODULES.find((m) => m.id === active);
   const manager = user.role === "admin" || user.role === "gestor";
+  const teamLabel = user.role === "admin" ? "Usuários" : "Minha equipe";
+  return (
+    <aside className={`rail ${className}`} aria-label="Navegação">
+      <Link href="/" className="brand" aria-label="Início" translate="no">
+        MM
+      </Link>
+      <nav aria-label="Módulos">
+        <RailItem href="/" label="Início" icon="inicio" active={!active} />
+        {allowed.map((m) => (
+          <RailItem key={m.id} href={m.href} label={m.name} short={SHORT[m.id]} icon={m.id} active={active === m.id} external={m.type === "external"} />
+        ))}
+        {manager ? <RailItem href="/admin/usuarios" label={teamLabel} short={user.role === "admin" ? "Usuários" : "Equipe"} icon="usuarios" active={active === "admin"} /> : null}
+      </nav>
+      <span className="spacer" />
+      <form action={logoutAction}>
+        <button className="rail-item" type="submit" aria-label="Sair">
+          <Icon name="sair" size={20} />
+          <span className="tip">Sair</span>
+          <span className="lbl" aria-hidden="true">Sair</span>
+        </button>
+      </form>
+    </aside>
+  );
+}
+
+// casca das páginas logadas: navegação + área principal
+export default function Shell({ user, active, children }) {
+  const current = MODULES.find((m) => m.id === active);
   const teamLabel = user.role === "admin" ? "Usuários" : "Minha equipe";
   return (
     <div className="app">
       <a href="#conteudo" className="skip-link">
         Pular para o conteúdo
       </a>
-      <aside className="rail" aria-label="Navegação">
-        <Link href="/" className="brand" aria-label="Início" translate="no">
-          MM
-        </Link>
-        <nav aria-label="Módulos">
-          <RailItem href="/" label="Início" icon="inicio" active={!active} />
-          {allowed.map((m) => (
-            <RailItem key={m.id} href={m.href} label={m.name} icon={m.id} active={active === m.id} external={m.type === "external"} />
-          ))}
-          {manager ? <RailItem href="/admin/usuarios" label={teamLabel} icon="usuarios" active={active === "admin"} /> : null}
-        </nav>
-        <span className="spacer" />
-        <form action={logoutAction}>
-          <button className="rail-item" type="submit" aria-label="Sair">
-            <Icon name="sair" size={20} />
-            <span className="tip">Sair</span>
-          </button>
-        </form>
-      </aside>
+      <RailNav user={user} active={active} />
       <div className="main">
         <header className="appbar">
           <div className="crumb">

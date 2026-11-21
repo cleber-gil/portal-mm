@@ -51,9 +51,9 @@
 .c-over { grid-area: over; } .c-stock { grid-area: stock; } .c-mods { grid-area: mods; }
 
 .hero-copy { position: relative; z-index: 2; max-width: 46ch; padding: 6px 4px 0; }
-.hero-copy .eyebrow { color: #7d8f9c; }
+.hero-copy .eyebrow { color: var(--muted); }
 .hero-copy h1 { font-size: 34px; font-weight: 500; letter-spacing: -0.04em; margin-top: 8px; }
-.hero-copy h1 em { font-style: normal; color: var(--accent); }
+.hero-copy h1 em { font-style: normal; color: #ad6610; } /* âmbar escuro: 3,5:1 na moldura (texto grande) */
 .hero-copy p { margin-top: 6px; font-size: 13px; }
 .hero-figure { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
 .hero-gauge { width: min(100%, 420px); height: auto; justify-self: center; overflow: visible; filter: drop-shadow(0 30px 40px rgba(32, 62, 84, 0.18)); }
@@ -75,12 +75,12 @@
 .dcard .big { font-size: 24px; font-weight: 400; letter-spacing: -0.03em; }
 
 .days-wrap { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; flex: 1; }
-.days-wrap .axis { font-size: 9.5px; color: #9aa8b2; line-height: 1.3; }
+.days-wrap .axis { font-size: 9.5px; color: var(--muted); line-height: 1.3; }
 .days-wrap .axis.right { text-align: right; }
 .day-bars { width: 100%; height: 150px; }
 .day-bars rect { transform-box: fill-box; transform-origin: center; animation: bar-in .8s var(--spring) backwards; animation-delay: calc(var(--i, 0) * 22ms + 200ms); }
 .day-bars .future rect { opacity: .35; }
-.legend { display: flex; justify-content: center; gap: 18px; font-size: 11px; color: #7d8b96; }
+.legend { display: flex; justify-content: center; gap: 18px; font-size: 11px; color: var(--muted); }
 .legend .lg { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
 .legend .lg.q { background: #d9e2e8; } .legend .lg.n { background: var(--accent); }
 
@@ -96,9 +96,9 @@
 .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(130px, 190px); gap: 18px; align-items: center; flex: 1; }
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 20px; }
 .dstat { display: grid; gap: 2px; }
-.dstat > span { font-size: 11px; color: #8a97a1; }
+.dstat > span { font-size: 11px; color: var(--muted); }
 .dstat b { font-size: 24px; font-weight: 400; letter-spacing: -0.03em; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.dstat b small { font-size: 10px; color: #7d8b96; margin-left: 3px; font-family: var(--font-sans); letter-spacing: 0; }
+.dstat b small { font-size: 10px; color: var(--muted); margin-left: 3px; font-family: var(--font-sans); letter-spacing: 0; }
 .dial, .compass { width: 100%; height: auto; }
 .compass .store { animation: rise .6s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 70ms + 300ms); }
 
@@ -160,3 +160,18 @@
 .compass a:hover text { fill: var(--ink); font-weight: 600; }
 /* no toque não há hover: as dicas ficam sempre visíveis */
 @media (hover: none) { .dstat-hint { opacity: 1; transform: none; } }
+
+/* medidor: legenda do que ele mede e tendência vs. mês anterior */
+.gauge-wrap { display: grid; justify-items: center; gap: 2px; }
+.gauge-cap { font-size: 11px; color: var(--muted); margin-top: -18px; letter-spacing: 0.02em; }
+.trend { font-size: 12px; font-weight: 600; font-family: var(--font-mono); }
+.trend.up { color: var(--ok); }
+.trend.down { color: var(--danger); }
+
+/* celular: a tela inicial usa a barra inferior comum; some a pílula do topo */
+@media (max-width: 900px) {
+  .dash-nav { display: none; }
+  .dash-top { grid-template-columns: 1fr auto; }
+  .dash-user form { display: none; }
+  .dash-page { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+}

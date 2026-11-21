@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { Icon } from "./_components/icons";
+import { RailNav } from "./_components/Shell";
 import { HeroGauge, DayBars, HalfGauge, DotColumns, MonthDial, StoreCompass } from "./_components/dash";
 import { logoutAction } from "./actions";
 import { requireUser, canAccess } from "@/lib/core/auth";
@@ -85,15 +86,33 @@ const Skel = ({ className, i, title }) => (
 );
 
 // ---------- blocos com dados (carregam em paralelo, a página abre na hora) ----------
+// medidor: quanto do total do mês anterior já foi vendido neste mês (0–100%); sem o mês anterior, o mês decorrido
 async function HeroData({ k }) {
   const m = await getMonthSales(k);
   if (m.error) return null;
+  const hasPrev = m.ofPrev != null;
+  const value = hasPrev ? m.ofPrev : m.elapsed;
+  const label = hasPrev ? `${Math.round(m.ofPrev * 100)}% do total de ${m.prev.label}` : `${Math.round(m.elapsed * 100)}% do mês decorrido`;
+  const vs = m.vsSamePeriod;
   return (
     <div className="hero-figure">
-      <HeroGauge value={m.elapsed} label={`${Math.round(m.elapsed * 100)}% do mês`} />
+      <div className="gauge-wrap">
+        <HeroGauge value={value} label={label} />
+        <span className="gauge-cap">{hasPrev ? `% de ${m.prev.label}` : "% do mês"}</span>
+      </div>
       <Link href={`/vendas?${monthQ(m)}`} className="hero-read is-link">
         <span className="eyebrow">Vendido em {m.month.label}</span>
         <b className="mono">{BRL.format(m.net)}</b>
+        {hasPrev ? (
+          <span className="text-2 small">
+            <b className="mono">{PCT.format(m.ofPrev)}</b> de {m.prev.label} ({BRL_C.format(m.prev.total)})
+          </span>
+        ) : null}
+        {vs != null ? (
+          <span className={`trend ${vs >= 0 ? "up" : "down"}`}>
+            {vs >= 0 ? "▲" : "▼"} {PCT.format(Math.abs(vs))} vs. 1–{m.month.today} de {m.prev.label}
+          </span>
+        ) : null}
         <span className="text-2 small">
           Projeção do mês <b className="mono">{BRL_C.format(m.projection)}</b>
         </span>
@@ -138,12 +157,15 @@ async function TopBranchCard({ k }) {
 async function ReturnsCard({ k }) {
   const m = await getMonthSales(k);
   if (m.error) return <Fail title="Vendas sem devolução" className="c-ret" i={3} />;
-  const last = m.days.slice(0, m.month.today).slice(-10).map((d) => d.count);
+  const last = m.days.slice(0, m.month.today).slice(-10).map((d) => d.returns);
+  const totalReturns = last.reduce((a, b) => a + b, 0);
   return (
     <Card title="Vendas sem devolução" href={`/vendas?${monthQ(m)}`} whole className="c-ret" i={3}>
       <b className="big mono">{PCT.format(1 - m.returnRate)}</b>
       <DotColumns values={last} />
-      <span className="small muted">Vendas por dia · últimos {last.length} dias</span>
+      <span className="small muted">
+        Devoluções por dia · últimos {last.length} dias ({INT.format(totalReturns)})
+      </span>
     </Card>
   );
 }
@@ -199,6 +221,8 @@ export default async function Home({ searchParams }) {
   return (
     <div className="dash-page">
       <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
+      {/* no celular a tela inicial usa a mesma barra inferior das outras telas */}
+      <RailNav user={user} className="home-rail" />
       <div className="dash-frame">
         <header className="dash-top">
           <Link href="/" className="dash-brand" aria-label="Início">
@@ -244,7 +268,7 @@ export default async function Home({ searchParams }) {
                 {greeting()}, <em>{user.name.split(" ")[0]}</em>.
               </h1>
               <p className="text-2">
-                {sales ? `Dia ${mi.today} de ${mi.daysInMonth}. Vendas a clientes, sem as vendas entre empresas do grupo.` : "Escolha um módulo para começar."}
+                {sales ? `Dia ${mi.today} de ${mi.daysInMonth}. Vendas a clientes, sem as vendas entre empresas do grupo; o medidor compara com o mês anterior.` : "Escolha um módulo para começar."}
               </p>
               {denied ? (
                 <div className="alert error" style={{ marginTop: 12 }}>

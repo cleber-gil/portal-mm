@@ -35,7 +35,7 @@ export function HeroGauge({ value, label }) {
         return (
           <g key={t}>
             <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#9fb1bd" strokeWidth="1.5" />
-            <text x={tx} y={ty + 4} textAnchor="middle" fontSize={on ? 15 : 11} fill={on ? "#ee9a30" : "#8a9aa6"} fontWeight={on ? 600 : 400}>
+            <text x={tx} y={ty + 4} textAnchor="middle" fontSize={on ? 15 : 11} fill={on ? "#ad6610" : "#66737e"} fontWeight={on ? 600 : 400}>
               {Math.round(t * 100)}
             </text>
           </g>
@@ -87,7 +87,7 @@ export function HalfGauge({ value, center, sub }) {
       <path d={arc(100, 104, 84, 180, 0)} fill="none" stroke="#eef2f5" strokeWidth="12" strokeLinecap="round" />
       <path className="draw" d={arc(100, 104, 84, 180, 180 - 180 * v)} fill="none" stroke="url(#hgauge)" strokeWidth="12" strokeLinecap="round" pathLength="1" />
       <text x="100" y="92" textAnchor="middle" fontSize="17" fontWeight="500" fill="#15212b">{center}</text>
-      {sub ? <text x="100" y="110" textAnchor="middle" fontSize="9.5" fill="#8796a1">{sub}</text> : null}
+      {sub ? <text x="100" y="110" textAnchor="middle" fontSize="9.5" fill="#66737e">{sub}</text> : null}
     </svg>
   );
 }
@@ -130,7 +130,7 @@ export function MonthDial({ today, days }) {
           <g key={d}>
             <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={d === today ? "#ee9a30" : past ? "#c3cfd7" : "#e3eaef"} strokeWidth={d === today ? 3 : 1.4} strokeLinecap="round" />
             {d % 5 === 0 ? (
-              <text x={tx} y={ty + 3} textAnchor="middle" fontSize="8" fill="#9aa8b2">
+              <text x={tx} y={ty + 3} textAnchor="middle" fontSize="8" fill="#66737e">
                 {String(d).padStart(2, "0")}
               </text>
             ) : null}
@@ -176,7 +176,7 @@ export function StoreCompass({ stores, hrefFor }) {
             <line x1="110" y1="110" x2={x} y2={y} stroke="#f6c27a" strokeWidth="1" />
             <circle cx={x} cy={y} r="14" fill="transparent" />
             <circle cx={x} cy={y} r={3 + 5 * share} fill="#ee9a30" fillOpacity={0.35 + 0.65 * share} />
-            <text x={lx} y={ly + 3} textAnchor="middle" fontSize="8.5" fill="#7d8b96">
+            <text x={lx} y={ly + 3} textAnchor="middle" fontSize="8.5" fill="#66737e">
               {s.name.slice(0, 3).toUpperCase()}
             </text>
           </g>
