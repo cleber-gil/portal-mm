@@ -58,7 +58,7 @@
 .hero-figure { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
 .hero-gauge { width: min(100%, 420px); height: auto; justify-self: center; overflow: visible; filter: drop-shadow(0 30px 40px rgba(32, 62, 84, 0.18)); }
 .hero-read { display: grid; gap: 4px; padding: 16px 18px; border-radius: 18px; background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(10px); box-shadow: var(--shadow); align-self: end; margin-bottom: 30px; animation: rise .6s var(--ease) .3s backwards; }
-.hero-read b.mono { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; }
+.hero-read > b.mono { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; }
 
 /* cartões */
 .dcard {
