@@ -9,7 +9,7 @@
   transition: background-color .2s var(--ease), color .2s var(--ease);
 }
 .estoque .tabs button:hover { color: var(--text); }
-.estoque .tabs button[aria-pressed="true"] { background: var(--ink); color: #f4f8fa; box-shadow: 0 8px 18px -10px rgba(20, 34, 48, 0.7); font-weight: 600; }
+.estoque .tabs button[aria-pressed="true"] { background: var(--solid); color: #fff; box-shadow: 0 8px 18px -10px rgba(74, 101, 120, 0.6); font-weight: 600; }
 .estoque .toolbar { display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
 .estoque .filters {
   display: grid; grid-template-columns: minmax(180px, 1.2fr) minmax(200px, 1.6fr) repeat(2, minmax(130px, 1fr)) auto;
