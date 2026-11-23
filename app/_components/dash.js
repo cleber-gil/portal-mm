@@ -20,8 +20,8 @@ export function HeroGauge({ value, label }) {
     <svg viewBox="0 0 400 400" className="hero-gauge" role="img" aria-label={label}>
       <defs>
         <linearGradient id="hg" x1="0" x2="1">
-          <stop offset="0%" stopColor="#f6c27a" />
-          <stop offset="100%" stopColor="#ee9a30" />
+          <stop offset="0%" stopColor="#f7d3a3" />
+          <stop offset="100%" stopColor="#eaa55a" />
         </linearGradient>
       </defs>
       <circle cx="200" cy="200" r="182" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.55)" />
@@ -41,7 +41,7 @@ export function HeroGauge({ value, label }) {
           </g>
         );
       })}
-      <circle cx={mx} cy={my} r="6" fill="#ee9a30" stroke="#fff" strokeWidth="2.5" className="pulse-dot" />
+      <circle cx={mx} cy={my} r="6" fill="#eaa55a" stroke="#fff" strokeWidth="2.5" className="pulse-dot" />
       <circle cx="200" cy="200" r="104" fill="rgba(255,255,255,0.55)" />
       <circle cx="200" cy="200" r="82" fill="#fffaf3" stroke="url(#hg)" strokeWidth="2" className="hub" />
       <image href="/mm-emblema.webp" x="161" y="144" width="78" height="112" className="hub" preserveAspectRatio="xMidYMid meet" aria-hidden="true" />
@@ -65,7 +65,7 @@ export function DayBars({ days, today }) {
         return (
           <g key={d.day} style={{ "--i": i }} className={future ? "future" : ""}>
             <rect className="bar-q" x={x - 0.9} y={30 - hq * 0.8} width="0.6" height={hq * 1.6} rx="0.3" fill="#d9e2e8" />
-            <rect className="bar-n" x={x + 0.1} y={30 - hn} width="0.8" height={Math.max(hn * 2, future ? 0 : 0.6)} rx="0.4" fill="#ee9a30" />
+            <rect className="bar-n" x={x + 0.1} y={30 - hn} width="0.8" height={Math.max(hn * 2, future ? 0 : 0.6)} rx="0.4" fill="#eaa55a" />
           </g>
         );
       })}
@@ -80,8 +80,8 @@ export function HalfGauge({ value, center, sub }) {
     <svg viewBox="0 0 200 116" className="half-gauge" role="img" aria-label={`${Math.round(v * 100)}%`}>
       <defs>
         <linearGradient id="hgauge" x1="0" x2="1">
-          <stop offset="0%" stopColor="#f6c27a" />
-          <stop offset="100%" stopColor="#ee9a30" />
+          <stop offset="0%" stopColor="#f7d3a3" />
+          <stop offset="100%" stopColor="#eaa55a" />
         </linearGradient>
       </defs>
       <path d={arc(100, 104, 84, 180, 0)} fill="none" stroke="#eef2f5" strokeWidth="12" strokeLinecap="round" />
@@ -100,7 +100,7 @@ export function DotColumns({ values, rows = 7 }) {
       {values.map((v, c) => {
         const on = Math.round((Math.max(0, v) / max) * rows);
         return Array.from({ length: rows }, (_, r) => (
-          <circle key={`${c}-${r}`} cx={c * 12 + 6} cy={(rows - r) * 9 - 4.5} r="2.1" fill={r < on ? "#ee9a30" : "#ece3d6"} style={{ "--i": c }} className={r < on ? "dot on" : "dot"} />
+          <circle key={`${c}-${r}`} cx={c * 12 + 6} cy={(rows - r) * 9 - 4.5} r="2.1" fill={r < on ? "#eaa55a" : "#ece3d6"} style={{ "--i": c }} className={r < on ? "dot on" : "dot"} />
         ));
       })}
     </svg>
@@ -115,7 +115,7 @@ export function MonthDial({ today, days }) {
       <defs>
         <radialGradient id="orb" cx="40%" cy="35%" r="75%">
           <stop offset="0%" stopColor="#fde3c0" />
-          <stop offset="100%" stopColor="#ee9a30" />
+          <stop offset="100%" stopColor="#eaa55a" />
         </radialGradient>
       </defs>
       <circle cx="100" cy="100" r="92" fill="#f4f7f9" />
@@ -128,7 +128,7 @@ export function MonthDial({ today, days }) {
         const past = d <= today;
         return (
           <g key={d}>
-            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={d === today ? "#ee9a30" : past ? "#c3cfd7" : "#e3eaef"} strokeWidth={d === today ? 3 : 1.4} strokeLinecap="round" />
+            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={d === today ? "#eaa55a" : past ? "#c3cfd7" : "#e3eaef"} strokeWidth={d === today ? 3 : 1.4} strokeLinecap="round" />
             {d % 5 === 0 ? (
               <text x={tx} y={ty + 3} textAnchor="middle" fontSize="8" fill="#66737e">
                 {String(d).padStart(2, "0")}
@@ -173,9 +173,9 @@ export function StoreCompass({ stores, hrefFor }) {
         return (
           <a key={s.code} href={hrefFor ? hrefFor(s) : undefined} aria-label={`${s.name}: ${s.stock} peças`}>
           <g style={{ "--i": i }} className="store">
-            <line x1="110" y1="110" x2={x} y2={y} stroke="#f6c27a" strokeWidth="1" />
+            <line x1="110" y1="110" x2={x} y2={y} stroke="#f7d3a3" strokeWidth="1" />
             <circle cx={x} cy={y} r="14" fill="transparent" />
-            <circle cx={x} cy={y} r={3 + 5 * share} fill="#ee9a30" fillOpacity={0.35 + 0.65 * share} />
+            <circle cx={x} cy={y} r={3 + 5 * share} fill="#eaa55a" fillOpacity={0.35 + 0.65 * share} />
             <text x={lx} y={ly + 3} textAnchor="middle" fontSize="8.5" fill="#66737e">
               {s.name.slice(0, 3).toUpperCase()}
             </text>
@@ -183,7 +183,7 @@ export function StoreCompass({ stores, hrefFor }) {
           </a>
         );
       })}
-      <circle cx="110" cy="110" r="5" fill="#ee9a30" stroke="#fff" strokeWidth="2" />
+      <circle cx="110" cy="110" r="5" fill="#eaa55a" stroke="#fff" strokeWidth="2" />
     </svg>
   );
 }
