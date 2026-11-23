@@ -47,16 +47,18 @@ export default function UserForm({ action, actor, modules, levels, branches, rol
           <input name="name" defaultValue={user?.name || ""} autoComplete="off" required />
         </label>
         <label className="field" style={{ flex: "1 1 220px" }}>
-          <span>E-mail</span>
+          <span>Usuário ou e-mail</span>
           <input
             name="email"
-            type="email"
+            type="text"
+            autoCapitalize="none"
             defaultValue={user?.email || ""}
             autoComplete="off"
             spellCheck={false}
             required={!editing}
             disabled={editing}
           />
+          {!editing ? <span className="help">Pode ser só um nome de usuário, ex.: loja.paulista</span> : null}
         </label>
         <label className="field" style={{ flex: "1 1 180px" }}>
           <span>{editing ? "Nova senha" : "Senha inicial"}</span>
