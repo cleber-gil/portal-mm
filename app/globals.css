@@ -73,14 +73,14 @@ p { margin: 0; }
   position: sticky; top: 16px; height: calc(100dvh - 32px);
   display: flex; flex-direction: column; align-items: center; gap: 6px;
   padding: 16px 0; border-radius: var(--radius-xl);
-  background: linear-gradient(180deg, #ffffff 0%, #f3f7fa 100%); color: var(--text-2);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 24px 50px -28px rgba(32, 62, 84, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background: linear-gradient(180deg, #cddbe5 0%, #bfd0dc 100%); color: #3f5566;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 24px 50px -28px rgba(32, 62, 84, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   z-index: 20;
 }
 .rail .brand {
   width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 18px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--ink);
+  background: linear-gradient(135deg, #fbe6cb, #f5d2a6); color: #7a4a14;
   font-weight: 800; letter-spacing: -0.05em; font-size: 15px; text-decoration: none;
   transition: transform .4s var(--spring);
 }
@@ -88,13 +88,13 @@ p { margin: 0; }
 .rail nav { display: flex; flex-direction: column; gap: 6px; position: relative; }
 .rail-item {
   position: relative; width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center;
-  color: #6f808d; text-decoration: none; transition: color .25s var(--ease), background .25s var(--ease), transform .35s var(--spring);
+  color: #4a6070; text-decoration: none; transition: color .25s var(--ease), background .25s var(--ease), transform .35s var(--spring);
 }
-.rail-item:hover { color: var(--accent-ink); background: var(--accent-soft); transform: scale(1.06); }
-.rail-item.active { color: var(--ink); background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 0 0 5px rgba(238, 154, 48, 0.12), 0 8px 18px -8px rgba(238, 154, 48, 0.45); }
+.rail-item:hover { color: #23394a; background: rgba(255, 255, 255, 0.45); transform: scale(1.06); }
+.rail-item.active { color: #7a4a14; background: linear-gradient(135deg, #fbe6cb, #f5d2a6); box-shadow: 0 6px 14px -8px rgba(122, 74, 20, 0.35); }
 .rail-item.active::before {
   content: ""; position: absolute; left: -15px; top: 50%; width: 5px; height: 22px; margin-top: -11px;
-  border-radius: 0 4px 4px 0; background: var(--accent); animation: rail-in .45s var(--spring) both;
+  border-radius: 0 4px 4px 0; background: #f0c48c; animation: rail-in .45s var(--spring) both;
 }
 .rail-item .tip {
   position: absolute; left: calc(100% + 14px); top: 50%; transform: translate(-6px, -50%); opacity: 0; pointer-events: none;
