@@ -59,6 +59,11 @@ export default async function UsersPage({ searchParams }) {
             Alterações salvas.
           </div>
         ) : null}
+        {searchParams?.excluido ? (
+          <div className="alert success" role="status">
+            Usuário excluído.
+          </div>
+        ) : null}
 
         <div className="table-wrap" style={{ maxHeight: "none" }}>
           <table>

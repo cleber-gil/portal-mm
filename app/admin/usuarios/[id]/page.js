@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import Shell from "../../../_components/Shell";
 import UserForm from "../UserForm";
+import UserStatusActions from "../UserStatusActions";
 import { Icon } from "../../../_components/icons";
 import { updateUserAction } from "../actions";
 import { requireManager } from "@/lib/core/auth";
@@ -53,6 +54,9 @@ export default async function EditUserPage({ params }) {
             user={{ ...u, modules, branches }}
             submitLabel="Salvar"
           />
+        </div>
+        <div className="panel">
+          <UserStatusActions user={{ id: u.id, name: u.name, active: u.active }} />
         </div>
       </div>
     </Shell>

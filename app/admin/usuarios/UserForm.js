@@ -115,12 +115,6 @@ export default function UserForm({ action, actor, modules, levels, branches, rol
         </label>
       ) : null}
 
-      {editing ? (
-        <label className="check">
-          <input type="checkbox" name="active" defaultChecked={user.active} /> Ativo (pode entrar no portal)
-        </label>
-      ) : null}
-
       {isTargetAdmin ? (
         <p className="small text-2">Administrador acessa todos os módulos e filiais.</p>
       ) : (
