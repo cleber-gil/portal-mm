@@ -24,13 +24,27 @@ function readWanted(formData) {
   };
 }
 
+// login aceita e-mail ou nome de usuário simples (letras, números, ponto, hífen, sublinhado)
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const USERNAME_RE = /^[a-z0-9][a-z0-9._-]{2,39}$/;
+function loginError(login) {
+  if (login.includes("@")) return EMAIL_RE.test(login) ? null : "E-mail inválido.";
+  return USERNAME_RE.test(login)
+    ? null
+    : "Usuário inválido: use de 3 a 40 caracteres, só letras sem acento, números, ponto, hífen ou sublinhado.";
+}
+
 // CPF só com dígitos (11); vazio = sem vínculo com o CRM
 function cleanCpf(v) {
   const d = String(v || "").replace(/\D/g, "");
   return d ? d.slice(-11).padStart(11, "0") : null;
 }
 
-function crmError(wanted, grant) {
+function crmError(wanted, grant, login) {
+  // o CRM identifica o usuário pelo e-mail no SSO
+  if (grant.modules.crm && login && !login.includes("@")) {
+    return "Para liberar o CRM, o login precisa ser um e-mail (o CRM identifica a pessoa por ele).";
+  }
   if (grant.role === "usuario" && grant.modules.crm && !wanted.crmCpf) {
     return "Para liberar o CRM a um usuário, informe o CPF da vendedora (é ele que define a carteira).";
   }
@@ -63,13 +77,15 @@ export async function createUserAction(_prev, formData) {
   const name = String(formData.get("name") || "").trim();
   const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
-  if (!name || !email) return { error: "Preencha nome e e-mail." };
+  if (!name || !email) return { error: "Preencha nome e usuário (ou e-mail)." };
+  const loginErr = loginError(email);
+  if (loginErr) return { error: loginErr };
   if (password.length < 8) return { error: "A senha precisa ter pelo menos 8 caracteres." };
 
   const wanted = readWanted(formData);
   const grant = sanitizeGrant(actor, wanted);
   if (!(await validManager(actor, grant))) return { error: "Escolha um gestor ativo como responsável." };
-  const crmErr = crmError(wanted, grant);
+  const crmErr = crmError(wanted, grant, email);
   if (crmErr) return { error: crmErr };
   if (grant.role !== "admin" && !grant.allBranches && grant.branches.length === 0) {
     return { error: "Marque pelo menos uma filial (ou todas)." };
@@ -77,7 +93,7 @@ export async function createUserAction(_prev, formData) {
 
   const db = sql();
   const [exists] = await db`SELECT id FROM users WHERE lower(email) = ${email}`;
-  if (exists) return { error: "Já existe um usuário com esse e-mail." };
+  if (exists) return { error: "Já existe um usuário com esse login." };
   const [u] = await db`INSERT INTO users (name, email, password_hash)
     VALUES (${name}, ${email}, ${await hashPassword(password)}) RETURNING id`;
   await db`UPDATE users SET crm_cpf = ${wanted.crmCpf} WHERE id = ${u.id}`;
@@ -92,7 +108,7 @@ export async function updateUserAction(_prev, formData) {
   await ensureSchema();
   const id = Number(formData.get("id"));
   const db = sql();
-  const [target] = await db`SELECT id, role, manager_id FROM users WHERE id = ${id}`;
+  const [target] = await db`SELECT id, email, role, manager_id FROM users WHERE id = ${id}`;
   if (!target) return { error: "Usuário não encontrado." };
   if (id === actor.id) return { error: "Para mudar o seu próprio acesso, peça a outro administrador." };
   if (!canManageTarget(actor, target)) return { error: "Este usuário não é da sua equipe." };
@@ -106,7 +122,7 @@ export async function updateUserAction(_prev, formData) {
   const wanted = readWanted(formData);
   const grant = sanitizeGrant(actor, wanted);
   if (!(await validManager(actor, grant))) return { error: "Escolha um gestor ativo como responsável." };
-  const crmErr = crmError(wanted, grant);
+  const crmErr = crmError(wanted, grant, target.email);
   if (crmErr) return { error: crmErr };
   if (grant.role !== "admin" && !grant.allBranches && grant.branches.length === 0) {
     return { error: "Marque pelo menos uma filial (ou todas)." };

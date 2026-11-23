@@ -7,14 +7,14 @@ import { sql, ensureSchema } from "@/lib/core/db";
 export async function loginAction(_prev, formData) {
   const email = String(formData.get("email") || "").trim();
   const password = String(formData.get("password") || "");
-  if (!email || !password) return { error: "Informe e-mail e senha." };
+  if (!email || !password) return { error: "Informe usuário (ou e-mail) e senha." };
   let ok = false;
   try {
     ok = await login(email, password);
   } catch (e) {
     return { error: e.message || "Erro ao entrar." };
   }
-  if (!ok) return { error: "E-mail ou senha inválidos." };
+  if (!ok) return { error: "Usuário ou senha inválidos." };
   redirect("/");
 }
 

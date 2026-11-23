@@ -20,13 +20,13 @@ export default async function LoginPage() {
   if (setupNeeded) redirect("/setup");
 
   return (
-    <AuthLayout title="Entrar" subtitle="Use o e-mail e a senha cadastrados pelo administrador.">
+    <AuthLayout title="Entrar" subtitle="Use o usuário (ou e-mail) e a senha cadastrados pelo administrador.">
       {dbError ? <div className="alert error">{dbError}</div> : null}
       <AuthForm
         action={loginAction}
         submitLabel="Entrar"
         fields={[
-          { name: "email", label: "E-mail", type: "email", autoComplete: "username" },
+          { name: "email", label: "Usuário ou e-mail", type: "text", autoComplete: "username" },
           { name: "password", label: "Senha", type: "password", autoComplete: "current-password" },
         ]}
       />
