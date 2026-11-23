@@ -73,8 +73,9 @@ p { margin: 0; }
   position: sticky; top: 16px; height: calc(100dvh - 32px);
   display: flex; flex-direction: column; align-items: center; gap: 6px;
   padding: 16px 0; border-radius: var(--radius-xl);
-  background: linear-gradient(180deg, var(--ink) 0%, #0f1b26 100%); color: #dfe8ee;
-  box-shadow: 0 30px 60px -30px rgba(20, 34, 48, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, #ffffff 0%, #f3f7fa 100%); color: var(--text-2);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 24px 50px -28px rgba(32, 62, 84, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   z-index: 20;
 }
 .rail .brand {
@@ -87,17 +88,17 @@ p { margin: 0; }
 .rail nav { display: flex; flex-direction: column; gap: 6px; position: relative; }
 .rail-item {
   position: relative; width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center;
-  color: #93a6b4; text-decoration: none; transition: color .25s var(--ease), background .25s var(--ease), transform .35s var(--spring);
+  color: #6f808d; text-decoration: none; transition: color .25s var(--ease), background .25s var(--ease), transform .35s var(--spring);
 }
-.rail-item:hover { color: #fff; background: rgba(255, 255, 255, 0.07); transform: scale(1.06); }
-.rail-item.active { color: var(--ink); background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 0 0 5px rgba(238, 154, 48, 0.16), 0 10px 24px -8px rgba(238, 154, 48, 0.7); }
+.rail-item:hover { color: var(--accent-ink); background: var(--accent-soft); transform: scale(1.06); }
+.rail-item.active { color: var(--ink); background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 0 0 5px rgba(238, 154, 48, 0.12), 0 8px 18px -8px rgba(238, 154, 48, 0.45); }
 .rail-item.active::before {
   content: ""; position: absolute; left: -15px; top: 50%; width: 5px; height: 22px; margin-top: -11px;
   border-radius: 0 4px 4px 0; background: var(--accent); animation: rail-in .45s var(--spring) both;
 }
 .rail-item .tip {
   position: absolute; left: calc(100% + 14px); top: 50%; transform: translate(-6px, -50%); opacity: 0; pointer-events: none;
-  background: var(--ink); color: #f4f8fa; font-size: 12px; font-weight: 500; white-space: nowrap; padding: 6px 10px; border-radius: 10px;
+  background: var(--surface); color: var(--text); border: 1px solid var(--line); font-size: 12px; font-weight: 500; white-space: nowrap; padding: 6px 10px; border-radius: 10px;
   box-shadow: var(--shadow); transition: opacity .2s var(--ease), transform .25s var(--ease);
 }
 .rail-item:hover .tip, .rail-item:focus-visible .tip { opacity: 1; transform: translate(0, -50%); }
@@ -115,7 +116,7 @@ p { margin: 0; }
 .userbox { display: flex; align-items: center; gap: 12px; font-size: 13px; padding: 5px 5px 5px 14px; background: rgba(255, 255, 255, 0.7); border-radius: 999px; box-shadow: var(--shadow); backdrop-filter: blur(8px); }
 .userbox .who { line-height: 1.2; text-align: right; }
 .avatar {
-  width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: #f4f8fa;
+  width: 34px; height: 34px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-ink);
   display: grid; place-items: center; font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
 }
 
