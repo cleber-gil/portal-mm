@@ -99,7 +99,7 @@ p { margin: 0; }
   position: relative; width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center;
   color: #4a6070; text-decoration: none; transition: color .25s var(--ease), background .25s var(--ease), transform .35s var(--spring);
 }
-.rail-item:hover { color: #23394a; background: rgba(255, 255, 255, 0.45); transform: scale(1.06); }
+.rail-item:hover { color: var(--peach-ink); background: var(--peach); box-shadow: 0 6px 14px -8px rgba(122, 74, 20, 0.3); transform: scale(1.06); }
 .rail-item.active { color: var(--peach-ink); background: linear-gradient(135deg, var(--peach), var(--peach-2)); box-shadow: 0 6px 14px -8px rgba(122, 74, 20, 0.35); }
 .rail-item.active::before {
   content: ""; position: absolute; left: -15px; top: 50%; width: 5px; height: 22px; margin-top: -11px;
