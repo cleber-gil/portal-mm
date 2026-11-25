@@ -19,6 +19,14 @@ const VIEWS = [
   { id: "conditional", name: "Condicional", note: "Saldo pelas notas: remessa 5912 − retorno 1913, últimos 3 meses" },
 ];
 const FISCAL = new Set(["consignment", "conditional"]);
+const TYPE_LABEL = { consignment: "Cons.", conditional: "Cond." };
+const TYPE_NAME = { consignment: "Consignação", conditional: "Condicional" };
+const DAY = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeZone: "America/Sao_Paulo" });
+const norm = (v) => String(v ?? "").trim().toUpperCase();
+// chave da peça na loja: referência+cor+tamanho; sem referência, cai para a descrição
+const skuKey = (ref, color, size, branchCode) => `${norm(ref)}|${norm(color)}|${norm(size)}@${branchCode}`;
+const nameKey = (name, branchCode) => `#${norm(name)}@${branchCode}`;
+const outQty = (r) => (r.out ? r.out.consignment + r.out.conditional : 0);
 
 function download(name, type, content) {
   const link = document.createElement("a");
@@ -66,6 +74,9 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
   const [open, setOpen] = useState(null);
+  const [onlyOut, setOnlyOut] = useState(false);
+  const [outside, setOutside] = useState(null);
+  const [outsideError, setOutsideError] = useState("");
   const fiscal = FISCAL.has(view);
 
   const load = useCallback(() => {
@@ -89,6 +100,25 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
     return () => window.clearInterval(t);
   }, [load]);
 
+  // peças em condicional/consignado (aba Lojas/Matriz): carrega à parte, a leitura das notas é lenta
+  const loadOutside = useCallback(() => {
+    setOutsideError("");
+    fetch("/api/estoque/fora")
+      .then(async (r) => ({ ok: r.ok, body: await r.json() }))
+      .then(({ ok, body }) => {
+        if (!ok) throw new Error(body.error || "Falha ao consultar consignação/condicional");
+        setOutside(body);
+      })
+      .catch((e) => setOutsideError(e.message));
+  }, []);
+
+  useEffect(() => {
+    if (fiscal) return undefined;
+    loadOutside();
+    const t = window.setInterval(loadOutside, REFRESH_MS);
+    return () => window.clearInterval(t);
+  }, [fiscal, loadOutside]);
+
   function switchView(id) {
     setView(id);
     setBranch("");
@@ -97,24 +127,68 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
     setOpen(null);
   }
 
+  const branchChoices = branches.filter((b) => (view === "matrix" ? b.code === 1 : view === "stores" ? b.code !== 1 : true));
+
   // ---------- saldo (lojas/matriz) ----------
   const products = !fiscal ? data?.products ?? [] : [];
-  const colorOptions = useMemo(() => [...new Set(products.map((p) => p.color).filter(Boolean))].sort(), [products]);
-  const sizeOptions = useMemo(() => [...new Set(products.map((p) => p.size).filter(Boolean))].sort(), [products]);
+  const outEntries = useMemo(() => (!fiscal ? outside?.entries ?? [] : []), [fiscal, outside]);
+  const colorOptions = useMemo(
+    () => [...new Set([...products, ...outEntries].map((p) => p.color).filter(Boolean))].sort(),
+    [products, outEntries]
+  );
+  const sizeOptions = useMemo(
+    () => [...new Set([...products, ...outEntries].map((p) => p.size).filter(Boolean))].sort(),
+    [products, outEntries]
+  );
+
+  // peça+loja -> quantidade fora por tipo e com quem está
+  const outIndex = useMemo(() => {
+    const map = new Map();
+    for (const e of outEntries) {
+      const key = e.reference ? skuKey(e.reference, e.color, e.size, e.branchCode) : nameKey(e.name || e.description, e.branchCode);
+      const cur = map.get(key) ?? { consignment: 0, conditional: 0, list: [], sample: e };
+      cur[e.type] += Number(e.quantity) || 0;
+      cur.list.push(e);
+      map.set(key, cur);
+    }
+    for (const v of map.values()) v.list.sort((a, b) => b.days - a.days);
+    return map;
+  }, [outEntries]);
+
   const stockRows = useMemo(() => {
     const term = search.trim().toUpperCase().replace(/\s+/g, "");
-    return products
-      .filter(
-        (p) =>
-          (!term || (p.reference + p.name).toUpperCase().replace(/\s+/g, "").includes(term)) &&
-          (!color || p.color === color) &&
-          (!size || p.size === size)
-      )
-      .flatMap((p) =>
-        p.branches.filter((b) => !branch || b.code === Number(branch)).map((b) => ({ ...p, branchCode: b.code, branchStock: b.stock }))
-      )
-      .sort((a, b) => b.branchStock - a.branchStock);
-  }, [products, search, color, size, branch]);
+    const passes = (ref, name, c, s, b) =>
+      (!term || (String(ref) + String(name)).toUpperCase().replace(/\s+/g, "").includes(term)) &&
+      (!color || c === color) &&
+      (!size || s === size) &&
+      (!branch || b === Number(branch));
+    const known = new Set();
+    const rows = [];
+    for (const p of products) {
+      for (const b of p.branches) {
+        const k1 = skuKey(p.reference, p.color, p.size, b.code);
+        const k2 = nameKey(p.name, b.code);
+        known.add(k1);
+        known.add(k2);
+        if (!passes(p.reference, p.name, p.color, p.size, b.code)) continue;
+        const out = outIndex.get(k1) ?? outIndex.get(k2) ?? null;
+        rows.push({ ...p, branchCode: b.code, branchStock: b.stock, out });
+      }
+    }
+    // peça que saiu inteira da loja: entra com saldo 0
+    const allowedCodes = new Set(branchChoices.map((b) => b.code));
+    for (const [key, out] of outIndex) {
+      if (known.has(key)) continue;
+      const e = out.sample;
+      const code = Number(e.branchCode);
+      const name = e.name || e.description;
+      if (!allowedCodes.has(code) || !passes(e.reference, name, e.color, e.size, code)) continue;
+      rows.push({ reference: e.reference, name, color: e.color, size: e.size, branchCode: code, branchStock: 0, out });
+    }
+    return (onlyOut ? rows.filter((r) => r.out) : rows).sort((a, b) =>
+      onlyOut ? outQty(b) - outQty(a) || b.branchStock - a.branchStock : b.branchStock - a.branchStock || outQty(b) - outQty(a)
+    );
+  }, [products, outIndex, search, color, size, branch, onlyOut, branchChoices]);
 
   // ---------- condicional/consignado ----------
   const clients = fiscal ? data?.clients ?? [] : [];
@@ -132,13 +206,11 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
   const perBranch = useMemo(() => {
     const totals = {};
     if (fiscal) for (const c of clientRows) totals[c.branchCode] = (totals[c.branchCode] || 0) + c.quantity;
-    else for (const r of stockRows) totals[r.branchCode] = (totals[r.branchCode] || 0) + r.branchStock;
+    else for (const r of stockRows) if (r.branchStock > 0) totals[r.branchCode] = (totals[r.branchCode] || 0) + r.branchStock;
     return Object.entries(totals)
       .map(([code, value]) => ({ code: Number(code), name: nameOf[code] || `Loja ${code}`, value }))
       .sort((a, b) => b.value - a.value);
   }, [fiscal, clientRows, stockRows, nameOf]);
-
-  const branchChoices = branches.filter((b) => (view === "matrix" ? b.code === 1 : view === "stores" ? b.code !== 1 : true));
 
   // ---------- métricas ----------
   const metrics = fiscal
@@ -150,8 +222,8 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
       ]
     : [
         { label: "Peças em saldo", value: qty(stockRows.reduce((s, r) => s + r.branchStock, 0)), primary: true },
-        { label: "SKUs (cor/tam.)", value: qty(new Set(stockRows.map((r) => `${r.reference}|${r.color}|${r.size}`)).size) },
-        { label: "Referências", value: qty(new Set(stockRows.map((r) => r.reference)).size) },
+        { label: "SKUs (cor/tam.)", value: qty(new Set(stockRows.filter((r) => r.branchStock > 0).map((r) => `${r.reference}|${r.color}|${r.size}`)).size) },
+        { label: "Referências", value: qty(new Set(stockRows.filter((r) => r.branchStock > 0).map((r) => r.reference)).size) },
         { label: "Lojas com saldo", value: qty(perBranch.length) },
       ];
 
@@ -165,16 +237,16 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
           ),
         ]
       : [
-          ["Referência", "Descrição", "Cor", "Loja", "Tamanho", "Saldo"],
-          ...stockRows.map((r) => [r.reference, r.name, r.color, nameOf[r.branchCode] || r.branchCode, r.size, r.branchStock]),
+          ["Referência", "Descrição", "Cor", "Loja", "Tamanho", "Saldo", "Consignação", "Condicional"],
+          ...stockRows.map((r) => [r.reference, r.name, r.color, nameOf[r.branchCode] || r.branchCode, r.size, r.branchStock, r.out?.consignment || 0, r.out?.conditional || 0]),
         ];
     download(`estoque-${view}.xls`, "application/vnd.ms-excel", lines.map((l) => l.join("\t")).join("\n"));
   }
   function exportDoc() {
     const esc = (v) => String(v ?? "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
-    const head = ["Referência", "Descrição", "Cor", "Loja", "Tamanho", "Saldo"];
+    const head = ["Referência", "Descrição", "Cor", "Loja", "Tamanho", "Saldo", "Consignação", "Condicional"];
     const html = `<table border="1"><tr>${head.map((h) => `<th>${h}</th>`).join("")}</tr>${stockRows
-      .map((r) => `<tr>${[r.reference, r.name, r.color, nameOf[r.branchCode], r.size, r.branchStock].map((v) => `<td>${esc(v)}</td>`).join("")}</tr>`)
+      .map((r) => `<tr>${[r.reference, r.name, r.color, nameOf[r.branchCode], r.size, r.branchStock, r.out?.consignment || 0, r.out?.conditional || 0].map((v) => `<td>${esc(v)}</td>`).join("")}</tr>`)
       .join("")}</table>`;
     download(`estoque-${view}.doc`, "application/msword", html);
   }
@@ -275,9 +347,17 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
                 ))}
               </select>
             </label>
+            <label className="field check-out">
+              <span>Consignação / condicional</span>
+              <span className="check-line">
+                <input type="checkbox" name="fora" checked={onlyOut} onChange={(e) => setOnlyOut(e.target.checked)} />
+                Só peças fora
+              </span>
+            </label>
           </>
         ) : (
           <>
+            <span />
             <span />
             <span />
           </>
@@ -290,6 +370,7 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
             setSearch("");
             setColor("");
             setSize("");
+            setOnlyOut(false);
           }}
         >
           <Icon name="fechar" size={16} /> Limpar
@@ -335,6 +416,15 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
             <section aria-label="Detalhamento">
               <div className="section-title">
                 <h2>{fiscal ? "Clientes com saldo em aberto" : "Produtos com saldo"}</h2>
+                {!fiscal ? (
+                  <span className="small muted">
+                    {outsideError
+                      ? `Consignação/condicional indisponível: ${outsideError}`
+                      : !outside
+                        ? "Lendo consignação e condicional… (pode levar até 1 min)"
+                        : "Clique numa peça com selo para ver com quem está"}
+                  </span>
+                ) : null}
                 <span className="small muted mono">
                   {qty(fiscal ? clientRows.length : stockRows.length)} {fiscal ? "clientes" : "registros"}
                 </span>
@@ -419,11 +509,17 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
                         <th>Loja</th>
                         <th>Tam.</th>
                         <th className="num">Saldo</th>
+                        <th>Fora</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {stockRows.slice(0, ROW_LIMIT).map((r, i) => (
-                        <tr key={`${r.reference}-${r.color}-${r.size}-${r.branchCode}-${i}`}>
+                      {stockRows.slice(0, ROW_LIMIT).map((r, i) => {
+                        const key = `${r.reference}|${r.color}|${r.size}|${r.name}|${r.branchCode}`;
+                        const expanded = r.out && open === key;
+                        const toggle = r.out ? () => setOpen(expanded ? null : key) : undefined;
+                        return (
+                        <Fragment key={`${key}-${i}`}>
+                        <tr className={r.out ? "has-out" : undefined} onClick={toggle}>
                           <td className="mono" translate="no" style={{ fontWeight: 500 }}>
                             {r.reference}
                           </td>
@@ -438,15 +534,69 @@ export default function EstoqueView({ branches, restricted, canMatrix, initialVi
                           <td className="num">
                             {r.branchStock <= 2 ? <span className="chip warn">{qty(r.branchStock)}</span> : qty(r.branchStock)}
                           </td>
+                          <td className="out-cell">
+                            {r.out ? (
+                              <button
+                                type="button"
+                                className="out-btn"
+                                aria-expanded={!!expanded}
+                                aria-label={`${expanded ? "Ocultar" : "Ver"} com quem está ${r.name}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggle();
+                                }}
+                              >
+                                {["consignment", "conditional"].map((t) =>
+                                  r.out[t] ? (
+                                    <span key={t} className={`chip out-${t}`}>
+                                      {TYPE_LABEL[t]} {qty(r.out[t])}
+                                    </span>
+                                  ) : null
+                                )}
+                              </button>
+                            ) : null}
+                          </td>
                         </tr>
-                      ))}
+                        {expanded
+                          ? r.out.list.map((e, j) => (
+                              <tr className="sub" key={`${key}-o${j}`}>
+                                <td>
+                                  <span className={`chip out-${e.type}`}>{TYPE_NAME[e.type]}</span>
+                                </td>
+                                <td colSpan={2}>
+                                  <b style={{ fontWeight: 500 }}>{e.personName || "—"}</b>
+                                  {e.city ? <span className="muted"> · {e.city}</span> : null}
+                                </td>
+                                <td className="mono">{e.phone || "—"}</td>
+                                <td>{e.since ? `desde ${DAY.format(new Date(e.since))}` : ""}</td>
+                                <td className="num">{qty(e.quantity)}</td>
+                                <td>
+                                  <span className={daysChip(e.days)}>{qty(e.days)} dias</span>{" "}
+                                  <button
+                                    type="button"
+                                    className="btn ghost"
+                                    style={{ padding: "2px 8px", fontSize: 12 }}
+                                    onClick={() => {
+                                      switchView(e.type);
+                                      setSearch(e.personName || "");
+                                    }}
+                                  >
+                                    Ver cliente
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          : null}
+                        </Fragment>
+                        );
+                      })}
                     </tbody>
                   </table>
                 )}
                 {(fiscal ? clientRows.length : stockRows.length) === 0 ? (
                   <div className="empty">
                     <Icon name="busca" size={24} />
-                    <b>{fiscal ? "Nada em aberto nesses filtros." : "Nenhum produto com saldo nesses filtros."}</b>
+                    <b>{fiscal ? "Nada em aberto nesses filtros." : onlyOut ? "Nenhuma peça fora nesses filtros." : "Nenhum produto com saldo nesses filtros."}</b>
                     <span>Confira a busca ou limpe os filtros.</span>
                   </div>
                 ) : null}
