@@ -12,7 +12,7 @@
 .estoque .tabs button[aria-pressed="true"] { background: var(--solid); color: #fff; box-shadow: 0 8px 18px -10px rgba(74, 101, 120, 0.6); font-weight: 600; }
 .estoque .toolbar { display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
 .estoque .filters {
-  display: grid; grid-template-columns: minmax(180px, 1.2fr) minmax(200px, 1.6fr) repeat(2, minmax(130px, 1fr)) auto;
+  display: grid; grid-template-columns: minmax(180px, 1.2fr) minmax(200px, 1.6fr) repeat(3, minmax(130px, 1fr)) auto;
   gap: 12px; align-items: end; padding: 18px 20px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow); border: 1px solid rgba(255, 255, 255, 0.8); margin-bottom: 18px;
 }
 .estoque .filters .field { min-width: 0; }
@@ -52,3 +52,13 @@
   .rail, .appbar, .skip-link, .estoque .tabs, .estoque .filters, .estoque .no-print { display: none !important; }
   .estoque .table-wrap { max-height: none !important; overflow: visible; }
 }
+
+/* peças em consignação/condicional na aba Lojas/Matriz */
+.estoque tr.has-out { cursor: pointer; }
+.estoque tr.has-out:hover td { background: var(--surface-2); }
+.estoque .out-cell { white-space: nowrap; }
+.estoque .out-btn { display: inline-flex; gap: 4px; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; }
+.estoque .chip.out-consignment { background: var(--accent-soft); color: var(--accent-ink); }
+.estoque .chip.out-conditional { background: var(--warn-soft); color: var(--warn); }
+.estoque .check-line { display: flex; align-items: center; gap: 8px; min-height: 38px; font-size: 14px; }
+.estoque .filters input[type="checkbox"] { width: auto; }
